@@ -9,7 +9,8 @@ const {
   getEditCourseForm,
   enrollInCourse,
   getTeacherDashboard,
-  getStudentDashboard
+  getStudentDashboard,
+  getVideoStream
 } = require('../controllers/courseController');
 const advancedResults = require('../middleware/advancedResults');
 const Course = require('../models/Course');
@@ -39,6 +40,9 @@ router
 router.get('/:id/edit', protect, authorize('teacher', 'admin'), getEditCourseForm);
 
 router.post('/:id/enroll', protect, authorize('student'), enrollInCourse);
+
+// New route to stream video by id
+router.get('/video/:id', getVideoStream);
 
 // Routes for dashboards
 router.get('/teacher/dashboard', protect, authorize('teacher'), getTeacherDashboard);

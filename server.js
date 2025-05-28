@@ -7,13 +7,15 @@ const mongoose = require('mongoose');
 
 const port = 3000;
 const DB = process.env.DATABASE_LOCAL;
-mongoose.connect(DB).then(() => console.log("Подключение к базе данных было установлено")).catch(err => console.log(err));
+mongoose.connect(DB).then(() => {
+  console.log("Подключение к базе данных было установлено");
 
-// Middleware
-app.use(bodyParser.json());
-app.use(express.static('public'));
+  // Middleware
+  app.use(bodyParser.json());
+  app.use(express.static('public'));
 
-// Запуск сервера
-app.listen(port, () => {
-  console.log(`Сервер запущен на http://localhost:${port}`);
-});
+  // Запуск сервера
+  app.listen(port, () => {
+    console.log(`Сервер запущен на http://localhost:${port}`);
+  });
+}).catch(err => console.log(err));

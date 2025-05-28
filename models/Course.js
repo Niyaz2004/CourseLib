@@ -10,8 +10,9 @@ const LessonSchema = new mongoose.Schema({
     required: [true, 'Please add lesson text']
   },
   video: {
-    type: String,
-    required: [true, 'Please add a video URL']
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'uploads.files',
+    required: [true, 'Please add a video file']
   }
 });
 

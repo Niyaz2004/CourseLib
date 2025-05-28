@@ -18,7 +18,23 @@ block content
           p Duration: #{course.weeks} weeks
           p Tuition: $#{course.tuition}
           p Skill Level: #{course.minimumSkill}
-      
+
+      if course.modules && course.modules.length > 0
+        .modules-section
+          h2 Modules
+          each mod, modIndex in course.modules
+            .module
+              h3= mod.title
+              if mod.lessons && mod.lessons.length > 0
+                each lesson, lessonIndex in mod.lessons
+                  .lesson
+                    h4 Lesson #{lessonIndex + 1}: #{lesson.title}
+                    p= lesson.text
+                    if lesson.video
+                      video(controls width="600")
+                        source(src=`/api/v1/courses/video/${lesson.video}` type="video/mp4")
+                        | Your browser does not support the video tag.
+
       .assignments-section
         h2 Assignments
         if user && (user.role === 'teacher' || user.role === 'admin')

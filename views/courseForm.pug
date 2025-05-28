@@ -3,7 +3,7 @@ extends layout
 block content
   .container
     h1 Create New Course
-    form#createCourseForm
+    form#createCourseForm(enctype="multipart/form-data")
       // Step 1
       .form-step#step1
         .form-group

@@ -25,8 +25,8 @@ const userRouter = require('./routes/userRouter');
 //require('./config/db')();
 
 // 3. Middleware для обработки тела запроса
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '500mb' }));
+app.use(express.urlencoded({ limit: '500mb', extended: true }));
 
 // 4. Cookie parser
 app.use(cookieParser());

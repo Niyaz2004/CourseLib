@@ -95,8 +95,8 @@ document.addEventListener('DOMContentLoaded', () => {
         <textarea name="module_${moduleIndex}_lesson_${lessonIndex}_text" class="form-control" rows="3" required></textarea>
       </div>
       <div class="form-group">
-        <label>Lesson Video URL</label>
-        <input type="text" name="module_${moduleIndex}_lesson_${lessonIndex}_video" class="form-control" required>
+        <label>Lesson Video File</label>
+        <input type="file" name="module_${moduleIndex}_lesson_${lessonIndex}_video" class="form-control" accept="video/*" required>
       </div>
       <button type="button" class="btn btn-danger btn-sm remove-lesson-btn">Remove Lesson</button>
     `;
@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
           lessons.push({
             title: lessonTitleInput.value.trim(),
             text: lessonTextInput.value.trim(),
-            video: lessonVideoInput.value.trim()
+            video: lessonVideoInput.files[0] ? lessonVideoInput.files[0].name : ''
           });
         });
         modules.push({
@@ -187,15 +187,27 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       });
 
-      const formData = {
-        title: form.title.value.trim(),
-        description: form.description.value.trim(),
-        weeks: form.weeks.value,
-        tuition: form.tuition.value,
-        minimumSkill: form.minimumSkill.value,
-        scholarshipsAvailable: form.scholarshipsAvailable.checked,
-        modules
-      };
+      const formData = new FormData();
+      formData.append('title', form.title.value.trim());
+      formData.append('description', form.description.value.trim());
+      formData.append('weeks', form.weeks.value);
+      formData.append('tuition', form.tuition.value);
+      formData.append('minimumSkill', form.minimumSkill.value);
+      formData.append('scholarshipsAvailable', form.scholarshipsAvailable.checked);
+
+      // Append modules as JSON string
+      formData.append('modules', JSON.stringify(modules));
+
+      // Append video files
+      moduleDivs.forEach((moduleDiv, moduleIndex) => {
+        const lessonDivs = moduleDiv.querySelectorAll('.lesson');
+        lessonDivs.forEach((lessonDiv, lessonIndex) => {
+          const lessonVideoInput = lessonDiv.querySelector(`input[name="module_${moduleIndex}_lesson_${lessonIndex}_video"]`);
+          if (lessonVideoInput.files[0]) {
+            formData.append('videos', lessonVideoInput.files[0], lessonVideoInput.files[0].name);
+          }
+        });
+      });
 
       try {
         // Use token from cookie only for security
@@ -217,10 +229,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const res = await fetch(url, {
           method,
           headers: {
-            'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
           },
-          body: JSON.stringify(formData)
+          body: formData
         });
 
         const data = await res.json();
