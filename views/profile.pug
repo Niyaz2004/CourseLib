@@ -1,0 +1,24 @@
+extends layout
+
+block content
+  .profile-container
+    h1 My Profile
+    .profile-info
+      p Email: #{user.email}
+      p Role: #{user.role}
+    
+    if user && (user.role === 'teacher' || user.role === 'admin')
+      .teacher-actions
+        a.btn(href="/courses/new") Create New Course
+        a.btn(href="/teacher/dashboard") Teacher Dashboard
+    
+    .change-password
+      h2 Change Password
+      form#changePasswordForm
+        .form-group
+          label(for="currentPassword") Current Password
+          input#currentPassword.form-control(type="password", required)
+        .form-group
+          label(for="newPassword") New Password
+          input#newPassword.form-control(type="password", required)
+        button.btn(type="submit") Update Password

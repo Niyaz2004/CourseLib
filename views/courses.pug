@@ -1,0 +1,24 @@
+extends layout
+
+block content
+  .courses-header
+    h1 All Courses
+    if user && (user.role === 'teacher' || user.role === 'admin')
+      a.btn(href="/courses/new") Create New Course
+  
+  .course-list
+    if courses && courses.length > 0
+      each course in courses
+        .course-card
+          h2= course.title
+          p= course.description
+          .course-meta
+            span Teacher: #{course.teacher.name}
+            span Weeks: #{course.weeks}
+          a.btn(href=`/courses/${course._id}`) View Details
+          if user && (user.role === 'teacher' || user.role === 'admin')
+            a.btn(href=`/courses/${course._id}/edit`) Edit
+            form(method="POST" action=`/api/v1/courses/${course._id}?_method=DELETE`)
+              button.btn.btn-danger(type="submit") Delete
+    else
+      p No courses available yet.

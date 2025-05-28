@@ -1,0 +1,22 @@
+extends layout
+
+block content
+  .container
+    h1 Register
+    form#registerForm
+      .form-group
+        label(for="email") Email
+        input#email.form-control(type="email" name="email" required)
+      .form-group
+        label(for="password") Password
+        input#password.form-control(type="password" name="password" required)
+      .form-group
+        label(for="role") Role
+        select#role.form-control(name="role" required)
+          option(value="student") Student
+          option(value="teacher") Teacher
+      button.btn.btn-primary(type="submit") Register
+    p
+      | Already have an account?
+      a(href="/login") Login here
+  script(src="/js/auth.js")

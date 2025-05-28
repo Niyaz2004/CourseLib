@@ -1,0 +1,28 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    title CourseLib
+    link(rel="stylesheet" href="/styles.css")
+  body
+    header
+      nav
+        ul
+          li
+            a(href="/") Home
+          if !user
+            li
+              a(href="/login") Login
+            li
+              a(href="/register") Register
+          else
+            li
+              a(href=`/${user.role}/dashboard`) Dashboard
+            li
+              a(href="#" id="logoutBtn") Logout
+    main
+      block content
+      block scripts
+    script(src="/js/auth.js")
+    script(src="/js/main.js")
