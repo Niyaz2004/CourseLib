@@ -1,7 +1,10 @@
-extends layout
+extends base
 
 block content
   .course-detail
+    .top-bar
+      a.btn.btn-secondary(href="/teacher/dashboard") ← Back to Dashboard
+      
     .course-header
       h1= course.title
       if user && (user.role === 'teacher' || user.role === 'admin')

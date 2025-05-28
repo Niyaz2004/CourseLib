@@ -1,6 +1,8 @@
-extends layout
+extends base
 
 block content
+  .top-bar
+    a.btn.btn-secondary(href="/teacher/dashboard") ← Back to Dashboard
   .container
     h1 Edit Course
     form#editCourseForm(method="POST" action=`/api/v1/courses/${course._id}?_method=PUT`)

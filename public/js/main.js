@@ -46,3 +46,4 @@ function showAlert(type, message) {
 
   setTimeout(() => alertDiv.remove(), 5000);
 }
+

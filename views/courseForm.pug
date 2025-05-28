@@ -1,46 +1,85 @@
 extends layout
 
 block content
-  .container
-    h1 Create New Course
-    form#createCourseForm
-      // Step 1
-      .form-step#step1
-        .form-group
-          label(for="title") Course Title
+  .form-container
+    .form-header
+      h1.form-title Create New Course
+      .form-progress
+        .progress-step.active(data-step="1") 1
+        .progress-step(data-step="2") 2
+        .progress-step(data-step="3") 3
+        .progress-step(data-step="4") 4
+
+    form#createCourseForm.form-body
+      // Step 1: Basic Info
+      .form-step.active#step1
+        .form-group.animated-input
           input#title.form-control(type="text" name="title" required)
-        .form-group
-          label(for="description") Description
+          label(for="title") Course Title
+          .input-underline
+
+        .form-group.animated-input.textarea-group
           textarea#description.form-control(name="description" rows="4" required)
-        button.btn.btn-primary(type="button" id="nextBtn1") Next
+          label(for="description") Description
+          .input-underline
 
-      // Step 2
-      .form-step#step2(style="display:none;")
-        .form-group
-          label(for="weeks") Duration (weeks)
-          input#weeks.form-control(type="number" name="weeks" min="1" required)
-        .form-group
-          label(for="tuition") Tuition Cost
-          input#tuition.form-control(type="number" name="tuition" min="0" required)
-        button.btn.btn-secondary(type="button" id="prevBtn2") Previous
-        button.btn.btn-primary(type="button" id="nextBtn2") Next
+        .form-actions
+          button.btn.next-btn(type="button" id="nextBtn1")
+            span Next
+            svg.arrow-icon(viewBox="0 0 24 24")
+              path(d="M5 12h14M12 5l7 7-7 7")
 
-      // Step 3
-      .form-step#step3(style="display:none;")
-        .form-group
-          label(for="minimumSkill") Minimum Skill Required
+      // Step 2: Duration & Cost
+      .form-step#step2
+        .form-grid
+          .form-group.animated-input
+            input#weeks.form-control(type="number" name="weeks" min="1" required)
+            label(for="weeks") Duration (weeks)
+            .input-underline
+
+          .form-group.animated-input
+            input#tuition.form-control(type="number" name="tuition" min="0" required)
+            label(for="tuition") Tuition Cost ($)
+            .input-underline
+
+        .form-actions
+          button.btn.prev-btn(type="button" id="prevBtn2")
+            svg.arrow-icon(viewBox="0 0 24 24")
+              path(d="M19 12H5M12 19l-7-7 7-7")
+            span Previous
+          button.btn.next-btn(type="button" id="nextBtn2")
+            span Next
+            svg.arrow-icon(viewBox="0 0 24 24")
+              path(d="M5 12h14M12 5l7 7-7 7")
+
+      // Step 3: Requirements
+      .form-step#step3
+        .form-group.animated-select
           select#minimumSkill.form-control(name="minimumSkill" required)
+            option(value="")
             option(value="beginner") Beginner
             option(value="intermediate") Intermediate
             option(value="advanced") Advanced
-        .form-group
-          label.checkbox-label
-            input#scholarshipsAvailable(type="checkbox" name="scholarshipsAvailable")
-            span Scholarships Available
-        button.btn.btn-secondary(type="button" id="prevBtn3") Previous
-        button.btn.btn-primary(type="button" id="nextBtn3") Next
+          label(for="minimumSkill") Minimum Skill Required
+          .input-underline
 
-      // Step 4 - Modules and Lessons
+        .form-group.checkbox-group
+          label.checkbox-container(for="scholarshipsAvailable")
+            input#scholarshipsAvailable(type="checkbox" name="scholarshipsAvailable")
+            span.checkmark
+            span.checkbox-label Scholarships Available
+
+        .form-actions
+          button.btn.prev-btn(type="button" id="prevBtn3")
+            svg.arrow-icon(viewBox="0 0 24 24")
+              path(d="M19 12H5M12 19l-7-7 7-7")
+            span Previous
+          button.btn.next-btn(type="button" id="nextBtn3")
+            span Next
+            svg.arrow-icon(viewBox="0 0 24 24")
+              path(d="M5 12h14M12 5l7 7-7 7")
+
+      //Step 4 - Modules and Lessons
       .form-step#step4(style="display:none;")
         #modules-container
           h3 Modules
