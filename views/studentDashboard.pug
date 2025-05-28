@@ -1,0 +1,15 @@
+extends layout
+
+block content
+  h1 Student Dashboard
+  p Browse and enroll in courses.
+  hr
+  if allCourses && allCourses.length
+    ul
+      each course in allCourses
+        li
+          a(href='/courses/' + course._id) #{course.title || course.name || 'Untitled Course'}
+          form(method='POST', action='/api/v1/courses/' + course._id + '/enroll')
+            button(type='submit') Enroll
+  else
+    p No courses available yet.

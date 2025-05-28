@@ -1,0 +1,51 @@
+extends layout
+
+block content
+  .container
+    h1 Create New Course
+    form#createCourseForm
+      // Step 1
+      .form-step#step1
+        .form-group
+          label(for="title") Course Title
+          input#title.form-control(type="text" name="title" required)
+        .form-group
+          label(for="description") Description
+          textarea#description.form-control(name="description" rows="4" required)
+        button.btn.btn-primary(type="button" id="nextBtn1") Next
+
+      // Step 2
+      .form-step#step2(style="display:none;")
+        .form-group
+          label(for="weeks") Duration (weeks)
+          input#weeks.form-control(type="number" name="weeks" min="1" required)
+        .form-group
+          label(for="tuition") Tuition Cost
+          input#tuition.form-control(type="number" name="tuition" min="0" required)
+        button.btn.btn-secondary(type="button" id="prevBtn2") Previous
+        button.btn.btn-primary(type="button" id="nextBtn2") Next
+
+      // Step 3
+      .form-step#step3(style="display:none;")
+        .form-group
+          label(for="minimumSkill") Minimum Skill Required
+          select#minimumSkill.form-control(name="minimumSkill" required)
+            option(value="beginner") Beginner
+            option(value="intermediate") Intermediate
+            option(value="advanced") Advanced
+        .form-group
+          label.checkbox-label
+            input#scholarshipsAvailable(type="checkbox" name="scholarshipsAvailable")
+            span Scholarships Available
+        button.btn.btn-secondary(type="button" id="prevBtn3") Previous
+        button.btn.btn-primary(type="button" id="nextBtn3") Next
+
+      // Step 4 - Modules and Lessons
+      .form-step#step4(style="display:none;")
+        #modules-container
+          h3 Modules
+          button.btn.btn-sm.btn-success(type="button" id="addModuleBtn") Add Module
+        button.btn.btn-secondary(type="button" id="prevBtn4") Previous
+        button.btn.btn-primary(type="submit") Create Course
+
+  script(src="/js/courseForm.js")

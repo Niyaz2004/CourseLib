@@ -1,0 +1,8 @@
+extends layout
+
+block content
+  .error-container
+    h1= status
+    h2= message
+    pre.error-details= stack
+    a.btn(href="/") Go to Homepage
