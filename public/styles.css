@@ -132,14 +132,16 @@ body {
   transform: translateX(0);
 }
 
-.btn-secondary {
-  background: transparent;
+/* Стили для кнопки "Back to Dashboard" */
+.top-bar .btn-secondary {
+  background-color: #6c757d; /* Серый цвет (стандартный для btn-secondary) */
   color: white;
-  border: 2px solid white;
+  border-color: #6c757d;
 }
 
-.btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.1);
+.top-bar .btn-secondary:hover {
+  background-color: #5a6268; /* Темнее при наведении */
+  border-color: #545b62;
 }
 
 /* Features Section */

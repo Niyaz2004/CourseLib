@@ -1,8 +1,6 @@
 extends base
 
 block content
-  .top-bar
-    a.btn.btn-secondary(href="/teacher/dashboard") ← Back to Dashboard
   .container
     h1 Edit Course
     form#editCourseForm(method="POST" action=`/api/v1/courses/${course._id}?_method=PUT`)
@@ -43,100 +41,178 @@ block content
         button.btn.btn-primary(type="button" id="nextBtn3") Next
 
       // Step 4 - Modules and Lessons
-      .form-step#step4(style="display:none;")
-        #modules-container
-          h3 Modules
-          button.btn.btn-sm.btn-success(type="button" id="addModuleBtn") Add Module
-          // Existing modules will be populated by JS
-        button.btn.btn-secondary(type="button" id="prevBtn4") Previous
-        button.btn.btn-primary(type="submit") Update Course
+.form-step#step4(style="display:none;")
+  #modules-container
+    h3 Modules
+    button.btn.btn-sm.btn-success(type="button" id="addModuleBtn") Add Module
+    if course.modules && course.modules.length
+      each module, moduleIndex in course.modules
+        .module(data-module-id=module._id)
+          h4 Module #{moduleIndex + 1}
+          .form-group
+            label Module Title
+            input.form-control(
+              type="text"
+              name=`modules[${moduleIndex}][title]`
+              value=module.title
+              required
+            )
+          input(type="hidden" name=`modules[${moduleIndex}][_id]` value=module._id)
+          
+          .lessons-container
+            if module.lessons && module.lessons.length
+              each lesson, lessonIndex in module.lessons
+                .lesson(data-lesson-id=lesson._id)
+                  h5 Lesson #{lessonIndex + 1}
+                  .form-group
+                    label Lesson Title
+                    input.form-control(
+                      type="text"
+                      name=`modules[${moduleIndex}][lessons][${lessonIndex}][title]`
+                      value=lesson.title
+                      required
+                    )
+                  .form-group
+                    label Lesson Text
+                    textarea.form-control(
+                      name=`modules[${moduleIndex}][lessons][${lessonIndex}][text]`
+                      rows="3"
+                      required
+                    )= lesson.text
+                  .form-group
+                    label Lesson Video URL
+                    input.form-control(
+                      type="text"
+                      name=`modules[${moduleIndex}][lessons][${lessonIndex}][video]`
+                      value=lesson.video
+                      required
+                    )
+                  input(type="hidden" name=`modules[${moduleIndex}][lessons][${lessonIndex}][_id]` value=lesson._id)
+                  button.btn.btn-danger.btn-sm.remove-lesson-btn(type="button") Remove Lesson
+          
+          button.btn.btn-primary.btn-sm.add-lesson-btn(type="button") Add Lesson
+          button.btn.btn-danger.btn-sm.remove-module-btn(type="button") Remove Module
 
   script(src="/js/courseForm.js")
   script.
-    document.addEventListener('DOMContentLoaded', () => {
-      const modulesContainer = document.getElementById('modules-container');
-      const courseModules = !{JSON.stringify(course.modules)};
+  document.addEventListener('DOMContentLoaded', () => {
+    // Инициализация обработчиков для существующих модулей
+    document.querySelectorAll('.module').forEach(module => {
+      const lessonsContainer = module.querySelector('.lessons-container');
+      const addLessonBtn = module.querySelector('.add-lesson-btn');
+      const removeModuleBtn = module.querySelector('.remove-module-btn');
+      const moduleId = module.dataset.moduleId;
 
-      function createLessonForm(moduleIndex, lessonIndex, lessonData) {
-        const lessonDiv = document.createElement('div');
-        lessonDiv.classList.add('lesson');
-        lessonDiv.style.border = '1px solid #ccc';
-        lessonDiv.style.padding = '10px';
-        lessonDiv.style.marginBottom = '10px';
+      // Обработчик добавления урока
+      addLessonBtn.addEventListener('click', () => {
+        const lessonCount = lessonsContainer.querySelectorAll('.lesson').length;
+        const newLesson = createLessonForm(moduleId, lessonCount, {});
+        lessonsContainer.appendChild(newLesson);
+      });
 
-        lessonDiv.innerHTML = `
-          <h5>Lesson ${lessonIndex + 1}</h5>
-          <div class="form-group">
-            <label>Lesson Title</label>
-            <input type="text" name="module_${moduleIndex}_lesson_${lessonIndex}_title" class="form-control" required value="${lessonData.title || ''}">
-          </div>
-          <div class="form-group">
-            <label>Lesson Text</label>
-            <textarea name="module_${moduleIndex}_lesson_${lessonIndex}_text" class="form-control" rows="3" required>${lessonData.text || ''}</textarea>
-          </div>
-          <div class="form-group">
-            <label>Lesson Video URL</label>
-            <input type="text" name="module_${moduleIndex}_lesson_${lessonIndex}_video" class="form-control" required value="${lessonData.video || ''}">
-          </div>
-          <button type="button" class="btn btn-danger btn-sm remove-lesson-btn">Remove Lesson</button>
-        `;
+      // Обработчик удаления модуля
+      removeModuleBtn.addEventListener('click', () => {
+        const deleteInput = document.createElement('input');
+        deleteInput.type = 'hidden';
+        deleteInput.name = `modules[${moduleId}][_delete]`;
+        deleteInput.value = 'true';
+        module.appendChild(deleteInput);
+        module.style.display = 'none';
+      });
 
-        lessonDiv.querySelector('.remove-lesson-btn').addEventListener('click', () => {
-          lessonDiv.remove();
+      // Инициализация обработчиков для существующих уроков
+      module.querySelectorAll('.lesson').forEach(lesson => {
+        const removeLessonBtn = lesson.querySelector('.remove-lesson-btn');
+        const lessonId = lesson.dataset.lessonId;
+        
+        removeLessonBtn.addEventListener('click', () => {
+          const deleteInput = document.createElement('input');
+          deleteInput.type = 'hidden';
+          deleteInput.name = `modules[${moduleId}][lessons][${lessonId}][_delete]`;
+          deleteInput.value = 'true';
+          lesson.appendChild(deleteInput);
+          lesson.style.display = 'none';
         });
-
-        return lessonDiv;
-      }
-
-      function createModuleForm(moduleIndex, moduleData) {
-        const moduleDiv = document.createElement('div');
-        moduleDiv.classList.add('module');
-        moduleDiv.style.border = '2px solid #000';
-        moduleDiv.style.padding = '15px';
-        moduleDiv.style.marginBottom = '20px';
-
-        moduleDiv.innerHTML = `
-          <h4>Module ${moduleIndex + 1}</h4>
-          <div class="form-group">
-            <label>Module Title</label>
-            <input type="text" name="module_${moduleIndex}_title" class="form-control" required value="${moduleData.title || ''}">
-          </div>
-          <div class="lessons-container"></div>
-          <button type="button" class="btn btn-primary btn-sm add-lesson-btn">Add Lesson</button>
-          <button type="button" class="btn btn-danger btn-sm remove-module-btn">Remove Module</button>
-        `;
-
-        const lessonsContainer = moduleDiv.querySelector('.lessons-container');
-        const addLessonBtn = moduleDiv.querySelector('.add-lesson-btn');
-        const removeModuleBtn = moduleDiv.querySelector('.remove-module-btn');
-
-        let lessonCount = 0;
-
-        if (moduleData.lessons && moduleData.lessons.length > 0) {
-          moduleData.lessons.forEach((lesson) => {
-            lessonsContainer.appendChild(createLessonForm(moduleIndex, lessonCount, lesson));
-            lessonCount++;
-          });
-        } else {
-          lessonsContainer.appendChild(createLessonForm(moduleIndex, lessonCount, {}));
-          lessonCount++;
-        }
-
-        addLessonBtn.addEventListener('click', () => {
-          lessonsContainer.appendChild(createLessonForm(moduleIndex, lessonCount, {}));
-          lessonCount++;
-        });
-
-        removeModuleBtn.addEventListener('click', () => {
-          moduleDiv.remove();
-        });
-
-        return moduleDiv;
-      }
-
-      if (modulesContainer) {
-        courseModules.forEach((moduleData, index) => {
-          modulesContainer.insertBefore(createModuleForm(index, moduleData), document.getElementById('addModuleBtn'));
-        });
-      }
+      });
     });
+
+    // Функция создания формы урока
+    function createLessonForm(moduleId, lessonIndex, lessonData) {
+      const lessonDiv = document.createElement('div');
+      lessonDiv.classList.add('lesson');
+      lessonDiv.innerHTML = `
+        <h5>New Lesson</h5>
+        <div class="form-group">
+          <label>Lesson Title</label>
+          <input type="text" 
+                 name="modules[${moduleId}][lessons][${lessonIndex}][title]" 
+                 class="form-control" 
+                 required
+                 value="${lessonData.title || ''}">
+        </div>
+        <div class="form-group">
+          <label>Lesson Text</label>
+          <textarea name="modules[${moduleId}][lessons][${lessonIndex}][text]" 
+                    class="form-control" 
+                    rows="3" 
+                    required>${lessonData.text || ''}</textarea>
+        </div>
+        <div class="form-group">
+          <label>Lesson Video URL</label>
+          <input type="text" 
+                 name="modules[${moduleId}][lessons][${lessonIndex}][video]" 
+                 class="form-control" 
+                 required
+                 value="${lessonData.video || ''}">
+        </div>
+        <button type="button" class="btn btn-danger btn-sm remove-lesson-btn">Remove Lesson</button>
+      `;
+
+      lessonDiv.querySelector('.remove-lesson-btn').addEventListener('click', function() {
+        lessonDiv.remove();
+      });
+
+      return lessonDiv;
+    }
+
+    // Обработчик для кнопки добавления модуля
+    document.getElementById('addModuleBtn')?.addEventListener('click', () => {
+      const modulesContainer = document.getElementById('modules-container');
+      const moduleCount = document.querySelectorAll('.module').length;
+      const newModuleId = 'new_' + Date.now();
+      
+      const moduleDiv = document.createElement('div');
+      moduleDiv.classList.add('module');
+      moduleDiv.dataset.moduleId = newModuleId;
+      
+      moduleDiv.innerHTML = `
+        <h4>New Module</h4>
+        <div class="form-group">
+          <label>Module Title</label>
+          <input type="text" name="modules[${newModuleId}][title]" class="form-control" required>
+        </div>
+        <div class="lessons-container"></div>
+        <button type="button" class="btn btn-primary btn-sm add-lesson-btn">Add Lesson</button>
+        <button type="button" class="btn btn-danger btn-sm remove-module-btn">Remove Module</button>
+      `;
+
+      const lessonsContainer = moduleDiv.querySelector('.lessons-container');
+      const addLessonBtn = moduleDiv.querySelector('.add-lesson-btn');
+      const removeModuleBtn = moduleDiv.querySelector('.remove-module-btn');
+
+      // Добавляем первый урок
+      lessonsContainer.appendChild(createLessonForm(newModuleId, 0, {}));
+
+      // Обработчики для нового модуля
+      addLessonBtn.addEventListener('click', () => {
+        const lessonCount = lessonsContainer.querySelectorAll('.lesson').length;
+        lessonsContainer.appendChild(createLessonForm(newModuleId, lessonCount, {}));
+      });
+
+      removeModuleBtn.addEventListener('click', () => {
+        moduleDiv.remove();
+      });
+
+      modulesContainer.insertBefore(moduleDiv, document.getElementById('addModuleBtn'));
+    });
+  });
