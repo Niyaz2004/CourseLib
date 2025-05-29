@@ -151,7 +151,51 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Удаление модуля
     if (e.target && e.target.classList.contains('remove-module-btn')) {
-      e.target.closest('.module').remove();
+      const moduleToRemove = e.target.closest('.module');
+      moduleToRemove.remove();
+
+      // После удаления пересчитать индексы модулей и обновить отображение
+      const modules = modulesContainer.querySelectorAll('.module');
+      modules.forEach((moduleDiv, newIndex) => {
+        moduleDiv.dataset.moduleIndex = newIndex;
+        // Обновить заголовок модуля
+        const header = moduleDiv.querySelector('h4');
+        if (header) {
+          header.textContent = `Module ${newIndex + 1}`;
+        }
+        // Обновить имя input для заголовка модуля
+        const moduleTitleInput = moduleDiv.querySelector('input[name^="module_"][name$="_title"]');
+        if (moduleTitleInput) {
+          moduleTitleInput.name = `module_${newIndex}_title`;
+        }
+        // Обновить уроки внутри модуля
+        const lessons = moduleDiv.querySelectorAll('.lesson');
+        lessons.forEach((lessonDiv, lessonIndex) => {
+          lessonDiv.dataset.lessonIndex = lessonIndex;
+          // Обновить заголовок урока
+          const lessonHeader = lessonDiv.querySelector('h5');
+          if (lessonHeader) {
+            lessonHeader.textContent = `Lesson ${lessonIndex + 1}`;
+          }
+          // Обновить имена input и textarea для урока
+          const lessonTitleInput = lessonDiv.querySelector(`input[name^="module_"][name$="_title"]`);
+          if (lessonTitleInput) {
+            lessonTitleInput.name = `module_${newIndex}_lesson_${lessonIndex}_title`;
+          }
+          const lessonTextInput = lessonDiv.querySelector(`textarea[name^="module_"][name$="_text"]`);
+          if (lessonTextInput) {
+            lessonTextInput.name = `module_${newIndex}_lesson_${lessonIndex}_text`;
+          }
+          const lessonVideoInput = lessonDiv.querySelector(`input[type="file"][name^="module_"][name$="_video"]`);
+          if (lessonVideoInput) {
+            lessonVideoInput.name = `module_${newIndex}_lesson_${lessonIndex}_video`;
+          }
+          const existingVideoInput = lessonDiv.querySelector(`input[type="hidden"][name^="module_"][name$="_existingVideo"]`);
+          if (existingVideoInput) {
+            existingVideoInput.name = `module_${newIndex}_lesson_${lessonIndex}_existingVideo`;
+          }
+        });
+      });
     }
   });
 
