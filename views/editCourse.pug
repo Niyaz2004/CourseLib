@@ -64,10 +64,27 @@ block content
                           textarea.form-control(name=`module_${moduleIndex}_lesson_${lessonIndex}_text` rows="3" required)= lesson.text
                         .form-group
                           label Lesson Video File
-                          if lesson.videoFile
-                            p Current video: #{lesson.videoFile.filename}
-                            input(type="hidden" name=`module_${moduleIndex}_lesson_${lessonIndex}_existingVideo` value=lesson.video)
-                          input.form-control(type="file" name=`module_${moduleIndex}_lesson_${lessonIndex}_video` accept="video/*")
+                          // Всегда показываем блок управления видео
+                          .video-control
+                            if lesson.video
+                              if lesson.videoFile
+                                p Current video: #{lesson.videoFile.filename}
+                              else
+                                p Video ID: #{lesson.video}
+                              
+                              label.checkbox-label
+                                input(
+                                  type="checkbox"
+                                  name="deleteVideos"
+                                  value=lesson.video
+                                )
+                                span Remove current video
+                              
+                              input(type="hidden" name=`module_${moduleIndex}_lesson_${lessonIndex}_existingVideo` value=lesson.video)
+                            else
+                              p No video uploaded
+                            
+                            input.form-control(type="file" name=`module_${moduleIndex}_lesson_${lessonIndex}_video` accept="video/*")
                         button.btn.btn-danger.btn-sm.remove-lesson-btn(type="button") Remove Lesson
                 button.btn.btn-primary.btn-sm.add-lesson-btn(type="button") Add Lesson
                 button.btn.btn-danger.btn-sm.remove-module-btn(type="button") Remove Module

@@ -119,6 +119,7 @@ exports.getCourse = asyncHandler(async (req, res, next) => {
   res.status(200).json({ success: true, data: course });
 });
 
+
 // @desc    Обновить курс
 // @route   PUT /api/v1/courses/:id
 // @access  Private (teacher/admin)
@@ -138,7 +139,7 @@ exports.updateCourse = [
 
     // Загрузка новых видео
     const fileIds = {};
-    if (req.files?.length > 0) {
+    if (req.files && req.files.length > 0) {
       for (const file of req.files) {
         try {
           fileIds[file.originalname] = await uploadToGridFS(file);
@@ -148,6 +149,11 @@ exports.updateCourse = [
         }
       }
     }
+
+    // Получаем список видео для удаления
+    const deleteVideos = Array.isArray(req.body.deleteVideos)
+      ? req.body.deleteVideos
+      : req.body.deleteVideos ? [req.body.deleteVideos] : [];
 
     // Обновление данных курса
     const { modules, ...rest } = req.body;
@@ -164,14 +170,46 @@ exports.updateCourse = [
     if (parsedModules) {
       course.modules = parsedModules.map(module => ({
         ...module,
-        lessons: module.lessons.map(lesson => ({
-          ...lesson,
-          video: fileIds[lesson.video] || lesson.video
-        }))
+        lessons: module.lessons.map(lesson => {
+          // Определяем новое значение для видео
+          let newVideo = lesson.video;
+          
+          // Если видео помечено на удаление
+          if (deleteVideos.includes(lesson.video)) {
+            newVideo = null;
+          } 
+          // Если есть новое видео для этого урока
+          else if (fileIds[lesson.video]) {
+            newVideo = fileIds[lesson.video];
+          }
+          
+          return {
+            ...lesson,
+            video: newVideo
+          };
+        })
       }));
     }
 
     await course.save();
+    
+    // Удаляем помеченные на удаление видео из GridFS
+    if (deleteVideos.length > 0) {
+      for (const videoId of deleteVideos) {
+        try {
+          // Проверяем, существует ли файл перед удалением
+          const files = await gfsBucket.find({ _id: new mongoose.Types.ObjectId(videoId) }).toArray();
+          if (files.length === 0) {
+            console.warn(`Video file with id ${videoId} not found in GridFS, skipping deletion.`);
+            continue;
+          }
+          await deleteFromGridFS(videoId);
+        } catch (err) {
+          console.error(`Failed to delete video ${videoId}`, err);
+        }
+      }
+    }
+
     res.status(200).json({ success: true, data: course });
   })
 ];
@@ -203,6 +241,25 @@ exports.getCourseForm = (req, res, next) => {
   res.render('courseForm', { title: 'Create Course' });
 };
 
+/**
+ * Удаляет файл из GridFS
+ * @param {String} fileId - ID файла для удаления
+ * @returns {Promise}
+ */
+const deleteFromGridFS = (fileId) => {
+  return new Promise((resolve, reject) => {
+    if (!gfsBucket) {
+      return reject(new Error('GridFS not initialized'));
+    }
+
+    const id = new mongoose.Types.ObjectId(fileId);
+    gfsBucket.delete(id, (err) => {
+      if (err) return reject(err);
+      resolve();
+    });
+  });
+};
+
 // @desc    Получить форму редактирования курса
 // @route   GET /courses/:id/edit
 // @access  Private (teacher/admin)
@@ -211,16 +268,31 @@ exports.getEditCourseForm = asyncHandler(async (req, res, next) => {
     .populate({
       path: 'modules.lessons.video',
       model: 'uploads.files',
-      select: 'filename'
+      select: 'filename _id'
     });
 
   if (!course) {
     return next(new ErrorResponse(`Course not found with id of ${req.params.id}`, 404));
   }
 
+  // Преобразуем для шаблона
+  const courseData = course.toObject({ virtuals: true });
+  
+  // Добавляем информацию о видео для каждого урока
+  courseData.modules.forEach(module => {
+    module.lessons.forEach(lesson => {
+      if (lesson.video && typeof lesson.video === 'object') {
+        lesson.videoFile = {
+          filename: lesson.video.filename,
+          id: lesson.video._id
+        };
+      }
+    });
+  });
+
   res.render('editCourse', { 
     title: 'Edit Course', 
-    course: course.toObject({ virtuals: true })
+    course: courseData
   });
 });
 

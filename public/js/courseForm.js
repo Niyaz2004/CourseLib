@@ -60,45 +60,74 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Функция создания формы урока
   function createLessonForm(moduleIndex, lessonIndex, lessonData = {}) {
-    const lessonDiv = document.createElement('div');
-    lessonDiv.classList.add('lesson');
-    lessonDiv.dataset.lessonIndex = lessonIndex;
-    lessonDiv.style.border = '1px solid #ccc';
-    lessonDiv.style.padding = '10px';
-    lessonDiv.style.marginBottom = '10px';
+    // Создаем элемент урока (добавлено!)
+  const lessonDiv = document.createElement('div');
+  lessonDiv.classList.add('lesson');
+  lessonDiv.dataset.lessonIndex = lessonIndex;
+  lessonDiv.style.border = '1px solid #ccc';
+  lessonDiv.style.padding = '10px';
+  lessonDiv.style.marginBottom = '10px';
 
-    const videoField = lessonData.videoFile ? `
+  const videoField = lessonData.video ? `
+    <div class="form-group">
+      <label>Lesson Video File</label>
+      
       <div class="existing-video">
-        <p>Current video: ${lessonData.videoFile.filename}</p>
-        <input type="hidden" name="module_${moduleIndex}_lesson_${lessonIndex}_existingVideo" value="${lessonData.video}">
+        <p>${lessonData.videoFile?.filename || 'Video attached'}</p>
+        <label class="checkbox-label">
+          <input 
+            type="checkbox" 
+            name="deleteVideos" 
+            value="${lessonData.video}"
+            class="delete-video-checkbox"
+          >
+          <span>Remove current video</span>
+        </label>
+        <input 
+          type="hidden" 
+          name="module_${moduleIndex}_lesson_${lessonIndex}_existingVideo" 
+          value="${lessonData.video}"
+        >
       </div>
+      
       <div class="form-group">
         <label>Replace Video File</label>
-        <input type="file" name="module_${moduleIndex}_lesson_${lessonIndex}_video" class="form-control" accept="video/*">
+        <input 
+          type="file" 
+          name="module_${moduleIndex}_lesson_${lessonIndex}_video" 
+          class="form-control" 
+          accept="video/*"
+        >
       </div>
-    ` : `
+    </div>
+  ` : `
       <div class="form-group">
         <label>Lesson Video File</label>
-        <input type="file" name="module_${moduleIndex}_lesson_${lessonIndex}_video" class="form-control" accept="video/*" ${isEditForm ? '' : 'required'}>
+        <input 
+          type="file" 
+          name="module_${moduleIndex}_lesson_${lessonIndex}_video" 
+          class="form-control" 
+          accept="video/*"
+        >
       </div>
     `;
 
-    lessonDiv.innerHTML = `
-      <h5>Lesson ${lessonIndex + 1}</h5>
-      <div class="form-group">
-        <label>Lesson Title</label>
-        <input type="text" name="module_${moduleIndex}_lesson_${lessonIndex}_title" class="form-control" required value="${lessonData.title || ''}">
-      </div>
-      <div class="form-group">
-        <label>Lesson Text</label>
-        <textarea name="module_${moduleIndex}_lesson_${lessonIndex}_text" class="form-control" rows="3" required>${lessonData.text || ''}</textarea>
-      </div>
-      ${videoField}
-      <button type="button" class="btn btn-danger btn-sm remove-lesson-btn">Remove Lesson</button>
-    `;
+  lessonDiv.innerHTML = `
+    <h5>Lesson ${lessonIndex + 1}</h5>
+    <div class="form-group">
+      <label>Lesson Title</label>
+      <input type="text" name="module_${moduleIndex}_lesson_${lessonIndex}_title" class="form-control" required value="${lessonData.title || ''}">
+    </div>
+    <div class="form-group">
+      <label>Lesson Text</label>
+      <textarea name="module_${moduleIndex}_lesson_${lessonIndex}_text" class="form-control" rows="3" required>${lessonData.text || ''}</textarea>
+    </div>
+    ${videoField}
+    <button type="button" class="btn btn-danger btn-sm remove-lesson-btn">Remove Lesson</button>
+  `;
 
-    return lessonDiv;
-  }
+  return lessonDiv;
+}
 
   // Функция создания формы модуля
   function createModuleForm(moduleIndex, moduleData = {}) {
@@ -146,7 +175,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Удаление урока
     if (e.target && e.target.classList.contains('remove-lesson-btn')) {
-      e.target.closest('.lesson').remove();
+      const lessonToRemove = e.target.closest('.lesson');
+      const moduleDiv = e.target.closest('.module');
+      lessonToRemove.remove();
+
+      // После удаления пересчитать индексы уроков и обновить отображение
+      const lessons = moduleDiv.querySelectorAll('.lesson');
+      lessons.forEach((lessonDiv, newIndex) => {
+        lessonDiv.dataset.lessonIndex = newIndex;
+        // Обновить заголовок урока
+        const header = lessonDiv.querySelector('h5');
+        if (header) {
+          header.textContent = `Lesson ${newIndex + 1}`;
+        }
+        // Обновить имена input и textarea для урока
+        const lessonTitleInput = lessonDiv.querySelector(`input[name^="module_"][name$="_title"]`);
+        if (lessonTitleInput) {
+          lessonTitleInput.name = `module_${moduleDiv.dataset.moduleIndex}_lesson_${newIndex}_title`;
+        }
+        const lessonTextInput = lessonDiv.querySelector(`textarea[name^="module_"][name$="_text"]`);
+        if (lessonTextInput) {
+          lessonTextInput.name = `module_${moduleDiv.dataset.moduleIndex}_lesson_${newIndex}_text`;
+        }
+        const lessonVideoInput = lessonDiv.querySelector(`input[type="file"][name^="module_"][name$="_video"]`);
+        if (lessonVideoInput) {
+          lessonVideoInput.name = `module_${moduleDiv.dataset.moduleIndex}_lesson_${newIndex}_video`;
+        }
+        const existingVideoInput = lessonDiv.querySelector(`input[type="hidden"][name^="module_"][name$="_existingVideo"]`);
+        if (existingVideoInput) {
+          existingVideoInput.name = `module_${moduleDiv.dataset.moduleIndex}_lesson_${newIndex}_existingVideo`;
+        }
+      });
     }
 
     // Удаление модуля
@@ -197,6 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       });
     }
+
   });
 
   // Обработчик кнопки добавления модуля
@@ -211,6 +271,19 @@ document.addEventListener('DOMContentLoaded', () => {
   if (form) {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
+    
+      const formData = new FormData();
+      
+      // Собираем ID видео для удаления
+      const deleteVideos = [];
+      document.querySelectorAll('input[name="deleteVideos"]:checked').forEach(checkbox => {
+        deleteVideos.push(checkbox.value);
+      });
+      
+      // Добавляем deleteVideos в formData
+      deleteVideos.forEach(videoId => {
+        formData.append('deleteVideos', videoId);
+      });
 
       const modules = [];
       const moduleDivs = modulesContainer.querySelectorAll('.module');
@@ -219,22 +292,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const moduleTitleInput = moduleDiv.querySelector(`input[name="module_${moduleIndex}_title"]`);
         const lessons = [];
         const lessonDivs = moduleDiv.querySelectorAll('.lesson');
-        
+      
         lessonDivs.forEach((lessonDiv, lessonIndex) => {
           const lessonTitleInput = lessonDiv.querySelector(`input[name="module_${moduleIndex}_lesson_${lessonIndex}_title"]`);
           const lessonTextInput = lessonDiv.querySelector(`textarea[name="module_${moduleIndex}_lesson_${lessonIndex}_text"]`);
           const lessonVideoInput = lessonDiv.querySelector(`input[name="module_${moduleIndex}_lesson_${lessonIndex}_video"]`);
           const existingVideoInput = lessonDiv.querySelector(`input[name="module_${moduleIndex}_lesson_${lessonIndex}_existingVideo"]`);
-          
+        
           const lessonObj = {
             title: lessonTitleInput.value.trim(),
             text: lessonTextInput.value.trim()
           };
 
-          if (existingVideoInput) {
-            lessonObj.video = existingVideoInput.value;
-          } else if (lessonVideoInput.files[0]) {
+          // Используем имя файла для связи с загруженным видео
+          if (lessonVideoInput.files[0]) {
             lessonObj.video = lessonVideoInput.files[0].name;
+          } else if (existingVideoInput) {
+            lessonObj.video = existingVideoInput.value;
           }
 
           lessons.push(lessonObj);
@@ -244,9 +318,9 @@ document.addEventListener('DOMContentLoaded', () => {
           title: moduleTitleInput.value.trim(),
           lessons
         });
-      });
+     });
 
-      const formData = new FormData();
+      // Добавляем основные поля
       formData.append('title', form.title.value.trim());
       formData.append('description', form.description.value.trim());
       formData.append('weeks', form.weeks.value);
