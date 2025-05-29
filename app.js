@@ -8,6 +8,7 @@ const xss = require('xss-clean');
 const rateLimit = require('express-rate-limit');
 const hpp = require('hpp');
 const cors = require('cors');
+const methodOverride = require('method-override');
 const session = require('express-session');
 const errorHandler = require('./middleware/error');
 const authRouter = require('./routes/authRouter');
@@ -66,6 +67,9 @@ app.use(session({
     maxAge: 24 * 60 * 60 * 1000 // 1 day
   }
 }));
+
+// Add method-override middleware
+app.use(methodOverride('_method'));
 
 // 11. Логирование запросов в разработке
 if (process.env.NODE_ENV === 'development') {

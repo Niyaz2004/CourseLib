@@ -12,8 +12,15 @@ const LessonSchema = new mongoose.Schema({
   video: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'uploads.files',
-    required: [true, 'Please add a video file']
+    required: false
   }
+}, { toObject: { virtuals: true }, toJSON: { virtuals: true } });
+
+LessonSchema.virtual('videoFile', {
+  ref: 'uploads.files',
+  localField: 'video',
+  foreignField: '_id',
+  justOne: true
 });
 
 const ModuleSchema = new mongoose.Schema({

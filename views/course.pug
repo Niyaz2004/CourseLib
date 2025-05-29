@@ -3,13 +3,15 @@ extends layout
 block content
   .course-detail
     .course-header
+      .header-actions
+        a.btn.btn-secondary(href="/teacher/dashboard") ← Back to courses
       h1= course.title
       if user && (user.role === 'teacher' || user.role === 'admin')
         .course-actions
           a.btn(href=`/courses/${course._id}/edit`) Edit Course
-          form(method="POST" action=`/api/v1/courses/${course._id}?_method=DELETE`)
+          form(method="POST" action=`/api/v1/courses/${course._id}?_method=DELETE` onsubmit="event.preventDefault(); fetch(this.action, { method: 'POST' }).then(() => window.location.href='/teacher/dashboard')")
             button.btn.btn-danger(type="submit") Delete Course
-    
+          
     .course-content
       .course-info
         p= course.description
@@ -35,26 +37,6 @@ block content
                         source(src=`/api/v1/courses/video/${lesson.video}` type="video/mp4")
                         | Your browser does not support the video tag.
 
-      .assignments-section
-        h2 Assignments
-        if user && (user.role === 'teacher' || user.role === 'admin')
-          a.btn(href=`/courses/${course._id}/assignments/new`) Create Assignment
-        
-        if assignments && assignments.length > 0
-          .assignment-list
-            each assignment in assignments
-              .assignment-card
-                h3= assignment.title
-                p Due: #{assignment.dueDate.toLocaleDateString()}
-                if user && (user.role === 'teacher' || user.role === 'admin')
-                  .assignment-actions
-                    a.btn(href=`/assignments/${assignment._id}/edit`) Edit
-                    form(method="POST" action=`/api/v1/assignments/${assignment._id}?_method=DELETE`)
-                      button.btn.btn-danger(type="submit") Delete
-        else
-          p No assignments yet.
-
 block scripts
   if user && (user.role === 'teacher' || user.role === 'admin')
     script(src="/js/teacherDashboard.js")
-  // Add missing block scripts to avoid "Unexpected block scripts" error

@@ -3,7 +3,7 @@ extends layout
 block content
   .container
     h1 Edit Course
-    form#editCourseForm(method="POST" action=`/api/v1/courses/${course._id}?_method=PUT`)
+    form#editCourseForm(method="POST" action=`/api/v1/courses/${course._id}?_method=PUT` enctype="multipart/form-data")
       // Step 1
       .form-step#step1
         .form-group
@@ -44,97 +44,37 @@ block content
       .form-step#step4(style="display:none;")
         #modules-container
           h3 Modules
+          if course.modules && course.modules.length > 0
+            each module, moduleIndex in course.modules
+              .module(data-module-index=moduleIndex)
+                h4 Module #{moduleIndex + 1}
+                .form-group
+                  label Module Title
+                  input.form-control(type="text" name=`module_${moduleIndex}_title` required value=module.title)
+                .lessons-container
+                  if module.lessons && module.lessons.length > 0
+                    each lesson, lessonIndex in module.lessons
+                      .lesson(data-lesson-index=lessonIndex)
+                        h5 Lesson #{lessonIndex + 1}
+                        .form-group
+                          label Lesson Title
+                          input.form-control(type="text" name=`module_${moduleIndex}_lesson_${lessonIndex}_title` required value=lesson.title)
+                        .form-group
+                          label Lesson Text
+                          textarea.form-control(name=`module_${moduleIndex}_lesson_${lessonIndex}_text` rows="3" required)= lesson.text
+                        .form-group
+                          label Lesson Video File
+                          if lesson.videoFile
+                            p Current video: #{lesson.videoFile.filename}
+                            input(type="hidden" name=`module_${moduleIndex}_lesson_${lessonIndex}_existingVideo` value=lesson.video)
+                          input.form-control(type="file" name=`module_${moduleIndex}_lesson_${lessonIndex}_video` accept="video/*")
+                        button.btn.btn-danger.btn-sm.remove-lesson-btn(type="button") Remove Lesson
+                button.btn.btn-primary.btn-sm.add-lesson-btn(type="button") Add Lesson
+                button.btn.btn-danger.btn-sm.remove-module-btn(type="button") Remove Module
           button.btn.btn-sm.btn-success(type="button" id="addModuleBtn") Add Module
-          // Existing modules will be populated by JS
         button.btn.btn-secondary(type="button" id="prevBtn4") Previous
         button.btn.btn-primary(type="submit") Update Course
 
-  script(src="/js/courseForm.js")
   script.
-    document.addEventListener('DOMContentLoaded', () => {
-      const modulesContainer = document.getElementById('modules-container');
-      const courseModules = !{JSON.stringify(course.modules)};
-
-      function createLessonForm(moduleIndex, lessonIndex, lessonData) {
-        const lessonDiv = document.createElement('div');
-        lessonDiv.classList.add('lesson');
-        lessonDiv.style.border = '1px solid #ccc';
-        lessonDiv.style.padding = '10px';
-        lessonDiv.style.marginBottom = '10px';
-
-        lessonDiv.innerHTML = `
-          <h5>Lesson ${lessonIndex + 1}</h5>
-          <div class="form-group">
-            <label>Lesson Title</label>
-            <input type="text" name="module_${moduleIndex}_lesson_${lessonIndex}_title" class="form-control" required value="${lessonData.title || ''}">
-          </div>
-          <div class="form-group">
-            <label>Lesson Text</label>
-            <textarea name="module_${moduleIndex}_lesson_${lessonIndex}_text" class="form-control" rows="3" required>${lessonData.text || ''}</textarea>
-          </div>
-          <div class="form-group">
-            <label>Lesson Video URL</label>
-            <input type="text" name="module_${moduleIndex}_lesson_${lessonIndex}_video" class="form-control" required value="${lessonData.video || ''}">
-          </div>
-          <button type="button" class="btn btn-danger btn-sm remove-lesson-btn">Remove Lesson</button>
-        `;
-
-        lessonDiv.querySelector('.remove-lesson-btn').addEventListener('click', () => {
-          lessonDiv.remove();
-        });
-
-        return lessonDiv;
-      }
-
-      function createModuleForm(moduleIndex, moduleData) {
-        const moduleDiv = document.createElement('div');
-        moduleDiv.classList.add('module');
-        moduleDiv.style.border = '2px solid #000';
-        moduleDiv.style.padding = '15px';
-        moduleDiv.style.marginBottom = '20px';
-
-        moduleDiv.innerHTML = `
-          <h4>Module ${moduleIndex + 1}</h4>
-          <div class="form-group">
-            <label>Module Title</label>
-            <input type="text" name="module_${moduleIndex}_title" class="form-control" required value="${moduleData.title || ''}">
-          </div>
-          <div class="lessons-container"></div>
-          <button type="button" class="btn btn-primary btn-sm add-lesson-btn">Add Lesson</button>
-          <button type="button" class="btn btn-danger btn-sm remove-module-btn">Remove Module</button>
-        `;
-
-        const lessonsContainer = moduleDiv.querySelector('.lessons-container');
-        const addLessonBtn = moduleDiv.querySelector('.add-lesson-btn');
-        const removeModuleBtn = moduleDiv.querySelector('.remove-module-btn');
-
-        let lessonCount = 0;
-
-        if (moduleData.lessons && moduleData.lessons.length > 0) {
-          moduleData.lessons.forEach((lesson) => {
-            lessonsContainer.appendChild(createLessonForm(moduleIndex, lessonCount, lesson));
-            lessonCount++;
-          });
-        } else {
-          lessonsContainer.appendChild(createLessonForm(moduleIndex, lessonCount, {}));
-          lessonCount++;
-        }
-
-        addLessonBtn.addEventListener('click', () => {
-          lessonsContainer.appendChild(createLessonForm(moduleIndex, lessonCount, {}));
-          lessonCount++;
-        });
-
-        removeModuleBtn.addEventListener('click', () => {
-          moduleDiv.remove();
-        });
-
-        return moduleDiv;
-      }
-
-      if (modulesContainer) {
-        courseModules.forEach((moduleData, index) => {
-          modulesContainer.insertBefore(createModuleForm(index, moduleData), document.getElementById('addModuleBtn'));
-        });
-      }
-    });
+    window.courseData = !{JSON.stringify(course)};
+  script(src="/js/courseForm.js")

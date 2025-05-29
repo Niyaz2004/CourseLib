@@ -193,7 +193,7 @@ exports.deleteCourse = asyncHandler(async (req, res, next) => {
 
   // TODO: Удаление связанных видео из GridFS
   await course.deleteOne();
-  res.status(200).json({ success: true, data: {} });
+  res.redirect('/teacher/dashboard');
 });
 
 // @desc    Получить форму создания курса
@@ -207,13 +207,21 @@ exports.getCourseForm = (req, res, next) => {
 // @route   GET /courses/:id/edit
 // @access  Private (teacher/admin)
 exports.getEditCourseForm = asyncHandler(async (req, res, next) => {
-  const course = await Course.findById(req.params.id);
+  const course = await Course.findById(req.params.id)
+    .populate({
+      path: 'modules.lessons.video',
+      model: 'uploads.files',
+      select: 'filename'
+    });
 
   if (!course) {
     return next(new ErrorResponse(`Course not found with id of ${req.params.id}`, 404));
   }
 
-  res.render('editCourse', { title: 'Edit Course', course });
+  res.render('editCourse', { 
+    title: 'Edit Course', 
+    course: course.toObject({ virtuals: true })
+  });
 });
 
 // @desc    Получить дашборд преподавателя

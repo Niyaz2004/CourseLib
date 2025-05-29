@@ -10,46 +10,5 @@ block content
       each course in courses
         li(data-id=course._id)
           a(href=`/courses/${course._id}`) #{course.title || course.name || 'Untitled Course'}
-          |  - 
-          a(href=`/courses/${course._id}/edit`) Edit
-          |  - 
-          button.btn.btn-danger.btn-sm.delete-course-btn(type='button') Delete
   else
     p No courses yet. Add some!
-
-  script.
-    document.addEventListener('DOMContentLoaded', () => {
-      const courseList = document.getElementById('courseList');
-      if (!courseList) return;
-
-      courseList.addEventListener('click', async (e) => {
-        if (e.target.classList.contains('delete-course-btn')) {
-          const li = e.target.closest('li');
-          const courseId = li.getAttribute('data-id');
-          if (!courseId) return;
-
-          if (!confirm('Are you sure you want to delete this course?')) return;
-
-          try {
-            const cookieToken = (document.cookie.match('(^|;)\\s*token\\s*=\\s*([^;]+)') || [])[2];
-            const res = await fetch(`/api/v1/courses/${courseId}`, {
-              method: 'DELETE',
-              headers: {
-                'Authorization': `Bearer ${cookieToken}`
-              }
-            });
-
-            if (!res.ok) {
-              const data = await res.json();
-              throw new Error(data.error || 'Failed to delete course');
-            }
-
-            // Remove the course from the list
-            li.remove();
-          } catch (err) {
-            alert(err.message);
-            console.error('Error deleting course:', err);
-          }
-        }
-      });
-    });

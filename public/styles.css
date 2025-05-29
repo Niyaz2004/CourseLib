@@ -152,3 +152,30 @@ button#prevBtn3 {
     grid-template-columns: 1fr;
   }
 }
+
+.module {
+  border: 1px solid #ddd;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+}
+
+.lesson {
+  border-left: 3px solid #007bff;
+  padding: 10px;
+  margin: 10px 0;
+  background: #f8f9fa;
+}
+
+.existing-video {
+  background: #f0f0f0;
+  padding: 8px;
+  margin-bottom: 8px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.existing-video p {
+  margin: 0;
+  font-size: 14px;
+}
