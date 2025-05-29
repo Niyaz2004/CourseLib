@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const prevBtn4 = document.getElementById('prevBtn4');
   const addModuleBtn = document.getElementById('addModuleBtn');
   const modulesContainer = document.getElementById('modules-container');
+  let moduleCount = document.querySelectorAll('.module-card').length;
 
   // Получаем данные курса
   const courseData = window.courseData || {};
@@ -151,17 +152,129 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Удаление модуля
     if (e.target && e.target.classList.contains('remove-module-btn')) {
-      e.target.closest('.module').remove();
+      e.target.closest('.module').remove(); // Удаляем модуль
+      renumberModules(); // Обновляем номера модулей
     }
   });
+
+  function renumberModules() {
+    const modules = document.querySelectorAll('.module-card');
+    modules.forEach((module, index) => {
+    // Обновляем data-атрибут
+    module.dataset.moduleIndex = index;
+    
+    // Обновляем видимый номер модуля
+    const titleSpan = module.querySelector('.module-card-title span');
+    if (titleSpan) {
+      titleSpan.textContent = `Module ${index + 1}`;
+    }
+    
+    // Обновляем имена полей ввода
+    const titleInput = module.querySelector('input[type="text"]');
+    if (titleInput) {
+      titleInput.name = `module_${index}_title`;
+    }
+    
+    // Обновляем уроки внутри модуля
+    const lessons = module.querySelectorAll('.lesson-card');
+    lessons.forEach((lesson, lessonIndex) => {
+      lesson.dataset.lessonIndex = lessonIndex;
+      
+      const lessonTitleSpan = lesson.querySelector('.lesson-card-title span');
+      if (lessonTitleSpan) {
+        lessonTitleSpan.textContent = `Lesson ${lessonIndex + 1}`;
+      }
+      
+      // Обновляем имена полей урока
+      const lessonTitleInput = lesson.querySelector('input[type="text"]');
+      if (lessonTitleInput) {
+        lessonTitleInput.name = `module_${index}_lesson_${lessonIndex}_title`;
+      }
+      
+      const lessonTextInput = lesson.querySelector('textarea');
+      if (lessonTextInput) {
+        lessonTextInput.name = `module_${index}_lesson_${lessonIndex}_text`;
+      }
+      
+      const lessonVideoInput = lesson.querySelector('input[type="file"]');
+      if (lessonVideoInput) {
+        lessonVideoInput.id = `lesson_video_${index}_${lessonIndex}`;
+        lessonVideoInput.name = `module_${index}_lesson_${lessonIndex}_video`;
+        const label = lesson.querySelector('.file-upload-label');
+        if (label) {
+          label.htmlFor = `lesson_video_${index}_${lessonIndex}`;
+        }
+      }
+    });
+  });
+  
+  // Обновляем счетчик модулей
+  moduleCount = modules.length
+}
+
+  function renumberModules() {
+    const modules = document.querySelectorAll('.module'); // Все модули на странице
+    modules.forEach((module, index) => {
+      // Обновляем data-атрибут moduleIndex
+      module.dataset.moduleIndex = index;
+
+      // Обновляем видимый номер модуля
+      const titleSpan = module.querySelector('.module-card-title span');
+      if (titleSpan) {
+        titleSpan.textContent = `Module ${index + 1}`;
+      }
+
+      // Обновляем имена полей ввода
+      const titleInput = module.querySelector('input[type="text"]');
+      if (titleInput) {
+        titleInput.name = `module_${index}_title`;
+      }
+
+      // Обновляем уроки внутри модуля
+      const lessons = module.querySelectorAll('.lesson');
+      lessons.forEach((lesson, lessonIndex) => {
+        lesson.dataset.lessonIndex = lessonIndex;
+
+        const lessonTitleSpan = lesson.querySelector('.lesson-card-title span');
+        if (lessonTitleSpan) {
+          lessonTitleSpan.textContent = `Lesson ${lessonIndex + 1}`;
+        }
+
+        // Обновляем имена полей урока
+        const lessonTitleInput = lesson.querySelector('input[type="text"]');
+        if (lessonTitleInput) {
+          lessonTitleInput.name = `module_${index}_lesson_${lessonIndex}_title`;
+        }
+
+        const lessonTextInput = lesson.querySelector('textarea');
+        if (lessonTextInput) {
+          lessonTextInput.name = `module_${index}_lesson_${lessonIndex}_text`;
+        }
+
+        const lessonVideoInput = lesson.querySelector('input[type="file"]');
+        if (lessonVideoInput) {
+          lessonVideoInput.id = `lesson_video_${index}_${lessonIndex}`;
+          lessonVideoInput.name = `module_${index}_lesson_${lessonIndex}_video`;
+          const label = lesson.querySelector('.file-upload-label');
+          if (label) {
+            label.htmlFor = `lesson_video_${index}_${lessonIndex}`;
+          }
+        }
+      });
+  });
+
+  // Обновляем счетчик модулей
+  moduleCount = modules.length;
+}
 
   // Обработчик кнопки добавления модуля
   if (addModuleBtn) {
     addModuleBtn.addEventListener('click', () => {
-      const moduleCount = modulesContainer.querySelectorAll('.module').length;
-      modulesContainer.insertBefore(createModuleForm(moduleCount), addModuleBtn);
+    const moduleCount = modulesContainer.querySelectorAll('.module').length;
+    modulesContainer.appendChild(createModuleForm(moduleCount)); // Добавляем модуль в конец
     });
   }
+
 
   // Обработчик отправки формы
   if (form) {

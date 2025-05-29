@@ -1,80 +1,152 @@
-extends layout
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title Edit #{course.title} | CourseLib
+    link(rel="stylesheet", href="/css/styles.css")
+    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css")
 
-block content
-  .container
-    h1 Edit Course
-    form#editCourseForm(method="POST" action=`/api/v1/courses/${course._id}?_method=PUT` enctype="multipart/form-data")
-      // Step 1
-      .form-step#step1
-        .form-group
-          label(for="title") Course Title
-          input#title.form-control(type="text" name="title" required value=course.title)
-        .form-group
-          label(for="description") Description
-          textarea#description.form-control(name="description" rows="4" required)= course.description
-        button.btn.btn-primary(type="button" id="nextBtn1") Next
+  body.course-form-page
+    .form-container
+      form#editCourseForm(method="POST" action=`/api/v1/courses/${course._id}?_method=PUT` enctype="multipart/form-data")
+        // Step 1
+        .form-step.active#step1
+          .form-group
+            label.form-label(for="title")
+              i.fas.fa-heading
+              span Course Title
+            input#title.form-input(type="text" name="title" placeholder="Enter course title" required value=course.title)
+            .input-underline
 
-      // Step 2
-      .form-step#step2(style="display:none;")
-        .form-group
-          label(for="weeks") Duration (weeks)
-          input#weeks.form-control(type="number" name="weeks" min="1" required value=course.weeks)
-        .form-group
-          label(for="tuition") Tuition Cost
-          input#tuition.form-control(type="number" name="tuition" min="0" required value=course.tuition)
-        button.btn.btn-secondary(type="button" id="prevBtn2") Previous
-        button.btn.btn-primary(type="button" id="nextBtn2") Next
+          .form-group
+            label.form-label(for="description")
+              i.fas.fa-align-left
+              span Description
+            textarea#description.form-input(name="description" rows="4" placeholder="Describe your course in detail" required)= course.description
+            .input-underline
 
-      // Step 3
-      .form-step#step3(style="display:none;")
-        .form-group
-          label(for="minimumSkill") Minimum Skill Required
-          select#minimumSkill.form-control(name="minimumSkill" required)
-            option(value="beginner" selected=course.minimumSkill=='beginner') Beginner
-            option(value="intermediate" selected=course.minimumSkill=='intermediate') Intermediate
-            option(value="advanced" selected=course.minimumSkill=='advanced') Advanced
-        .form-group
-          label.checkbox-label
-            input#scholarshipsAvailable(type="checkbox" name="scholarshipsAvailable" checked=course.scholarshipsAvailable)
-            span Scholarships Available
-        button.btn.btn-secondary(type="button" id="prevBtn3") Previous
-        button.btn.btn-primary(type="button" id="nextBtn3") Next
+          button.btn.btn-primary(type="button" id="nextBtn1") Next
 
-      // Step 4 - Modules and Lessons
-      .form-step#step4(style="display:none;")
-        #modules-container
-          h3 Modules
-          if course.modules && course.modules.length > 0
-            each module, moduleIndex in course.modules
-              .module(data-module-index=moduleIndex)
-                h4 Module #{moduleIndex + 1}
-                .form-group
-                  label Module Title
-                  input.form-control(type="text" name=`module_${moduleIndex}_title` required value=module.title)
-                .lessons-container
-                  if module.lessons && module.lessons.length > 0
-                    each lesson, lessonIndex in module.lessons
-                      .lesson(data-lesson-index=lessonIndex)
-                        h5 Lesson #{lessonIndex + 1}
-                        .form-group
-                          label Lesson Title
-                          input.form-control(type="text" name=`module_${moduleIndex}_lesson_${lessonIndex}_title` required value=lesson.title)
-                        .form-group
-                          label Lesson Text
-                          textarea.form-control(name=`module_${moduleIndex}_lesson_${lessonIndex}_text` rows="3" required)= lesson.text
-                        .form-group
-                          label Lesson Video File
-                          if lesson.videoFile
-                            p Current video: #{lesson.videoFile.filename}
-                            input(type="hidden" name=`module_${moduleIndex}_lesson_${lessonIndex}_existingVideo` value=lesson.video)
-                          input.form-control(type="file" name=`module_${moduleIndex}_lesson_${lessonIndex}_video` accept="video/*")
-                        button.btn.btn-danger.btn-sm.remove-lesson-btn(type="button") Remove Lesson
-                button.btn.btn-primary.btn-sm.add-lesson-btn(type="button") Add Lesson
-                button.btn.btn-danger.btn-sm.remove-module-btn(type="button") Remove Module
-          button.btn.btn-sm.btn-success(type="button" id="addModuleBtn") Add Module
-        button.btn.btn-secondary(type="button" id="prevBtn4") Previous
-        button.btn.btn-primary(type="submit") Update Course
+        // Step 2
+        .form-step#step2
+          .form-group
+            label.form-label(for="weeks")
+              i.fas.fa-calendar-week
+              span Duration (weeks)
+            input#weeks.form-input(type="number" name="weeks" min="1" placeholder="e.g. 8" required value=course.weeks)
+            .input-underline
 
-  script.
-    window.courseData = !{JSON.stringify(course)};
-  script(src="/js/courseForm.js")
+          .form-group
+            label.form-label(for="tuition")
+              i.fas.fa-dollar-sign
+              span Tuition Cost
+            .input-with-symbol
+              span.symbol $
+              input#tuition.form-input(type="number" name="tuition" min="0" placeholder="0.00" step="0.01" required value=course.tuition)
+            .input-underline
+
+          button.btn.btn-secondary(type="button" id="prevBtn2") Previous
+          button.btn.btn-primary(type="button" id="nextBtn2") Next
+
+        // Step 3
+        .form-step#step3
+          .form-group
+            label.form-label(for="minimumSkill")
+              i.fas.fa-layer-group
+              span Minimum Skill Required
+            select#minimumSkill.form-input(name="minimumSkill" required)
+              option(value="" disabled) Select skill level
+              option(value="beginner" selected=course.minimumSkill=='beginner') Beginner
+              option(value="intermediate" selected=course.minimumSkill=='intermediate') Intermediate
+              option(value="advanced" selected=course.minimumSkill=='advanced') Advanced
+            .input-underline
+
+          .form-group.checkbox-group
+            label.checkbox-label(for="scholarshipsAvailable")
+              input#scholarshipsAvailable(type="checkbox" name="scholarshipsAvailable" checked=course.scholarshipsAvailable)
+              .custom-checkbox
+                i.fas.fa-check
+              span Scholarships Available
+
+          button.btn.btn-secondary(type="button" id="prevBtn3") Previous
+          button.btn.btn-primary(type="button" id="nextBtn3") Next
+
+        // Step 4 - Modules and Lessons
+        .form-step#step4
+          .form-group
+            label.form-label
+              i.fas.fa-cubes
+              span Course Content
+            #modules-container.modules-container
+              .module-header
+                h3.modules-title
+                  i.fas.fa-cubes
+                  span Modules
+                button.btn-form.small.add-module(type="button" id="addModuleBtn")
+                  i.fas.fa-plus
+                  span Add Module
+
+              if course.modules && course.modules.length > 0
+                each module, moduleIndex in course.modules
+                  .module-card(data-module-index=moduleIndex)
+                    .module-card-header
+                      h4.module-card-title
+                        i.fas.fa-cube
+                        span Module #{moduleIndex + 1}
+                      .module-actions
+                        button.module-action.add-lesson-btn(type="button")
+                          i.fas.fa-plus-circle
+                        button.module-action.remove-module-btn(type="button")
+                          i.fas.fa-trash-alt
+                    
+                    .module-card-body
+                      .form-group
+                        label.form-label Module Title
+                        input.form-input(type="text" name=`module_${moduleIndex}_title` required value=module.title)
+                        .input-underline
+                      
+                      .lessons-container
+                        if module.lessons && module.lessons.length > 0
+                          each lesson, lessonIndex in module.lessons
+                            .lesson-card(data-lesson-index=lessonIndex)
+                              .lesson-card-header
+                                h5.lesson-card-title
+                                  i.fas.fa-book-open
+                                  span Lesson #{lessonIndex + 1}
+                                button.lesson-action.remove-lesson-btn(type="button")
+                                  i.fas.fa-times
+                              
+                              .lesson-card-body
+                                .form-group
+                                  label.form-label Lesson Title
+                                  input.form-input(type="text" name=`module_${moduleIndex}_lesson_${lessonIndex}_title` required value=lesson.title)
+                                  .input-underline
+                                
+                                .form-group
+                                  label.form-label Lesson Content
+                                  textarea.form-input(name=`module_${moduleIndex}_lesson_${lessonIndex}_text` rows="3" required)= lesson.text
+                                  .input-underline
+                                
+                                .form-group
+                                  label.form-label Lesson Video
+                                  if lesson.videoFile
+                                    .current-file
+                                      i.fas.fa-file-video
+                                      span #{lesson.videoFile.filename}
+                                      input(type="hidden" name=`module_${moduleIndex}_lesson_${lessonIndex}_existingVideo` value=lesson.video)
+                                  .file-upload
+                                    label.file-upload-label(for=`lesson_video_${moduleIndex}_${lessonIndex}`)
+                                      i.fas.fa-upload
+                                      span Upload New Video
+                                    input.file-upload-input(type="file" id=`lesson_video_${moduleIndex}_${lessonIndex}` name=`module_${moduleIndex}_lesson_${lessonIndex}_video` accept="video/*")
+
+          .form-actions
+            button.btn.btn-secondary(type="button" id="prevBtn4") Previous
+            button.btn-form.submit(type="submit")
+              i.fas.fa-save
+              span Update Course
+
+    script.
+      window.courseData = !{JSON.stringify(course)};
+    script(src="/js/courseForm.js")

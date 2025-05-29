@@ -1,14 +1,70 @@
-extends layout
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title Teacher Dashboard | CourseLib
+    link(rel="stylesheet", href="/css/styles.css")
+    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css")
 
-block content
-  h1 Teacher Dashboard
-  p Manage your courses here.
-  a.btn.btn-primary(href='/teacher/createcourse') Create New Course
-  hr
-  if courses && courses.length
-    ul#courseList
-      each course in courses
-        li(data-id=course._id)
-          a(href=`/courses/${course._id}`) #{course.title || course.name || 'Untitled Course'}
-  else
-    p No courses yet. Add some!
+  body.dashboard-page
+    .dashboard-container
+      .dashboard-sidebar
+        .sidebar-header
+          h2 CourseLib
+          p Teacher Portal
+        nav.sidebar-nav
+          a.nav-item.active(href="/teacher/dashboard")
+            i.fas.fa-tachometer-alt
+            span Dashboard
+          a.nav-item(href="/teacher/createcourse")
+            i.fas.fa-plus-circle
+            span Create Course
+          a.nav-item(href="/teacher/profile")
+            i.fas.fa-user
+            span Profile
+          a.nav-item(href="/logout")
+            i.fas.fa-sign-out-alt
+            span Logout
+
+      .dashboard-main
+        .dashboard-header
+          h1.dashboard-title
+            i.fas.fa-chalkboard-teacher
+            span Teacher Dashboard
+          p.dashboard-subtitle Manage your courses and students
+
+        .dashboard-content
+          .dashboard-actions
+            a.btn-dashboard-primary(href='/teacher/createcourse')
+              i.fas.fa-plus
+              span Create New Course
+
+          if courses && courses.length
+            .courses-grid
+              each course in courses
+                .course-card
+                  .course-card-header
+                    h3.course-title #{course.title || course.name || 'Untitled Course'}
+                    .course-actions
+                      a.course-action(href=`/courses/${course._id}`)
+                        i.fas.fa-eye
+                  .course-card-body
+                    p.course-description #{course.description || 'No description provided'}
+                    .course-stats
+                      .stat
+                        i.fas.fa-users
+                        span #{course.students ? course.students.length : 0} students
+                      .stat
+                        i.fas.fa-tasks
+                        span #{course.assignments ? course.assignments.length : 0} assignments
+          else
+            .empty-state
+              i.fas.fa-book-open.empty-icon
+              h3.empty-title No Courses Yet
+              p.empty-text Get started by creating your first course
+              a.btn-dashboard-primary(href='/teacher/createcourse')
+                i.fas.fa-plus
+                span Create Course
+
+    script(src="/js/dashboard.js")

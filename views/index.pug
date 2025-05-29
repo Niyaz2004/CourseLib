@@ -1,20 +1,19 @@
-extends layout
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title CourseLib - Educational Platform
+    link(rel="stylesheet", href="css/styles.css")
 
-block content
-  section.hero
-    h1 Welcome to CourseLib
-    p An educational platform for teachers and students
-    if user
-      a.btn(href=`/${user.role}/dashboard`) Go to Dashboard
-    else
-      .cta-buttons
-        a.btn(href="/login") Login
-        a.btn.btn-secondary(href="/register") Register
-
-  section.features
-    .feature
-      h2 For Teachers
-      p Create and manage courses and assignments
-    .feature
-      h2 For Students
-      p Enroll in courses and submit assignments
+  body
+    block content
+      section.hero
+        h1 Welcome to CourseLib
+        p An educational platform for teachers and students
+        if user
+          a.btn(href=`/${user.role}/dashboard`) Go to Dashboard
+        else
+          .cta-buttons
+            a.btn(href="/login") Login
+            a.btn.btn-secondary(href="/register") Register

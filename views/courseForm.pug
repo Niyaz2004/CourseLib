@@ -1,51 +1,98 @@
-extends layout
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title #{action === 'edit' ? 'Edit Course' : 'Create Course'} | CourseLib
+    link(rel="stylesheet", href="/css/styles.css")
+    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css")
 
-block content
-  .container
-    h1 Create New Course
-    form#createCourseForm(enctype="multipart/form-data")
-      // Step 1
-      .form-step#step1
-        .form-group
-          label(for="title") Course Title
-          input#title.form-control(type="text" name="title" required)
-        .form-group
-          label(for="description") Description
-          textarea#description.form-control(name="description" rows="4" required)
-        button.btn.btn-primary(type="button" id="nextBtn1") Next
+  body.course-form-page
+    .form-container
+      form#createCourseForm(enctype="multipart/form-data")
+        // Step 1
+        .form-step.active#step1
+          .form-group
+            label.form-label(for="title")
+              i.fas.fa-heading
+              span Course Title
+            input#title.form-input(type="text" name="title" placeholder="Enter course title" required)
+            .input-underline
 
-      // Step 2
-      .form-step#step2(style="display:none;")
-        .form-group
-          label(for="weeks") Duration (weeks)
-          input#weeks.form-control(type="number" name="weeks" min="1" required)
-        .form-group
-          label(for="tuition") Tuition Cost
-          input#tuition.form-control(type="number" name="tuition" min="0" required)
-        button.btn.btn-secondary(type="button" id="prevBtn2") Previous
-        button.btn.btn-primary(type="button" id="nextBtn2") Next
+          .form-group
+            label.form-label(for="description")
+              i.fas.fa-align-left
+              span Description
+            textarea#description.form-input(name="description" rows="4" placeholder="Describe your course in detail" required)
+            .input-underline
 
-      // Step 3
-      .form-step#step3(style="display:none;")
-        .form-group
-          label(for="minimumSkill") Minimum Skill Required
-          select#minimumSkill.form-control(name="minimumSkill" required)
-            option(value="beginner") Beginner
-            option(value="intermediate") Intermediate
-            option(value="advanced") Advanced
-        .form-group
-          label.checkbox-label
-            input#scholarshipsAvailable(type="checkbox" name="scholarshipsAvailable")
-            span Scholarships Available
-        button.btn.btn-secondary(type="button" id="prevBtn3") Previous
-        button.btn.btn-primary(type="button" id="nextBtn3") Next
+          button.btn.btn-primary(type="button" id="nextBtn1") Next
 
-      // Step 4 - Modules and Lessons
-      .form-step#step4(style="display:none;")
-        #modules-container
-          h3 Modules
-          button.btn.btn-sm.btn-success(type="button" id="addModuleBtn") Add Module
-        button.btn.btn-secondary(type="button" id="prevBtn4") Previous
-        button.btn.btn-primary(type="submit") Create Course
+        // Step 2
+        .form-step#step2
+          .form-group
+            label.form-label(for="weeks")
+              i.fas.fa-calendar-week
+              span Duration (weeks)
+            input#weeks.form-input(type="number" name="weeks" min="1" placeholder="e.g. 8" required)
+            .input-underline
 
-  script(src="/js/courseForm.js")
+          .form-group
+            label.form-label(for="tuition")
+              i.fas.fa-dollar-sign
+              span Tuition Cost
+            .input-with-symbol
+              span.symbol $
+              input#tuition.form-input(type="number" name="tuition" min="0" placeholder="0.00" step="0.01" required)
+            .input-underline
+
+          button.btn.btn-secondary(type="button" id="prevBtn2") Previous
+          button.btn.btn-primary(type="button" id="nextBtn2") Next
+
+        // Step 3
+        .form-step#step3
+          .form-group
+            label.form-label(for="minimumSkill")
+              i.fas.fa-layer-group
+              span Minimum Skill Required
+            select#minimumSkill.form-input(name="minimumSkill" required)
+              option(value="" disabled selected) Select skill level
+              option(value="beginner") Beginner
+              option(value="intermediate") Intermediate
+              option(value="advanced") Advanced
+            .input-underline
+
+          .form-group.checkbox-group
+            label.checkbox-label(for="scholarshipsAvailable")
+              input#scholarshipsAvailable(type="checkbox" name="scholarshipsAvailable")
+              .custom-checkbox
+                i.fas.fa-check
+              span Scholarships Available
+
+          button.btn.btn-secondary(type="button" id="prevBtn3") Previous
+          button.btn.btn-primary(type="button" id="nextBtn3") Next
+
+        // Step 4 - Modules and Lessons
+        .form-step#step4
+          .form-group
+            label.form-label
+              i.fas.fa-layer-group
+              span Course Content
+            #modules-container.modules-container
+              .module-header
+                h3.modules-title
+                  i.fas.fa-cubes
+                  span Modules
+                button.btn-form.small.add-module(type="button" id="addModuleBtn")
+                  i.fas.fa-plus
+                  span Add Module
+
+              // Module template will be added here by JavaScript
+
+          .form-actions
+            button.btn.btn-secondary(type="button" id="prevBtn4") Previous
+            button.btn-form.submit(type="submit")
+              i.fas.fa-save
+              span #{action === 'edit' ? 'Update Course' : 'Create Course'}
+
+    script(src="/js/courseForm.js")

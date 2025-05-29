@@ -1,22 +1,53 @@
-extends layout
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title Register | CourseLib
+    link(rel="stylesheet", href="/css/styles.css")
+    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css")
 
-block content
-  .container
-    h1 Register
-    form#registerForm
-      .form-group
-        label(for="email") Email
-        input#email.form-control(type="email" name="email" required)
-      .form-group
-        label(for="password") Password
-        input#password.form-control(type="password" name="password" required)
-      .form-group
-        label(for="role") Role
-        select#role.form-control(name="role" required)
-          option(value="student") Student
-          option(value="teacher") Teacher
-      button.btn.btn-primary(type="submit") Register
-    p
-      | Already have an account?
-      a(href="/login") Login here
-  script(src="/js/auth.js")
+  body.auth-page
+    .auth-container
+      .auth-card
+        .auth-header
+          h1.auth-title Create Account
+          p.auth-subtitle Join our educational community
+
+        form#registerForm.auth-form
+          .form-group
+            label.form-label(for="email") 
+              i.fas.fa-envelope
+              span Email Address
+            input#email.form-input(type="email" name="email" placeholder="Enter your email" required)
+            .input-underline
+
+          .form-group
+            label.form-label(for="password") 
+              i.fas.fa-lock
+              span Password
+            input#password.form-input(type="password" name="password" placeholder="Create a password" required)
+            .input-underline
+            .password-strength
+
+          .form-group
+            label.form-label(for="role") 
+              i.fas.fa-user-tag
+              span I am a
+            select#role.form-input(name="role" required)
+              option(value="" disabled selected) Select your role
+              option(value="student") Student
+              option(value="teacher") Teacher
+            .input-underline
+
+          button.btn-auth(type="submit")
+            span Register
+            i.fas.fa-arrow-right
+
+        .auth-footer
+          p Already have an account?
+          a.auth-link(href="/login") 
+            i.fas.fa-sign-in-alt
+            span Login here
+
+    script(src="/js/auth.js")

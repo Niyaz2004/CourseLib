@@ -1,17 +1,55 @@
-extends layout
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title Login | CourseLib
+    link(rel="stylesheet", href="/css/styles.css")
+    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css")
 
-block content
-  .container
-    h1 Login
-    form#loginForm
-      .form-group
-        label(for="email") Email
-        input#email.form-control(type="email" name="email" required)
-      .form-group
-        label(for="password") Password
-        input#password.form-control(type="password" name="password" required)
-      button.btn.btn-primary(type="submit") Login
-    p
-      | Don't have an account?
-      a(href="/register") Register here
-  script(src="/js/auth.js")
+  body.auth-page
+    .auth-container
+      .auth-card
+        .auth-header
+          h1.auth-title Welcome Back
+          p.auth-subtitle Continue your learning journey
+
+        form#loginForm.auth-form
+          .form-group
+            label.form-label(for="email") 
+              i.fas.fa-envelope
+              span Email Address
+            input#email.form-input(type="email" name="email" placeholder="Enter your email" required)
+            .input-underline
+
+          .form-group
+            label.form-label(for="password") 
+              i.fas.fa-lock
+              span Password
+            input#password.form-input(type="password" name="password" placeholder="Enter your password" required)
+            .input-underline
+            .forgot-password
+              a.auth-link(href="/forgot-password") Forgot password?
+
+          button.btn-auth(type="submit")
+            span Login
+            i.fas.fa-sign-in-alt
+
+        .social-login
+          p.auth-divider
+            span or continue with
+          .social-icons
+            a.social-icon(href="#")
+              i.fab.fa-google
+            a.social-icon(href="#")
+              i.fab.fa-facebook-f
+            a.social-icon(href="#")
+              i.fab.fa-github
+
+        .auth-footer
+          p Don't have an account?
+          a.auth-link(href="/register") 
+            i.fas.fa-user-plus
+            span Register here
+
+    script(src="/js/auth.js")
