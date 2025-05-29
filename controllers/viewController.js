@@ -33,7 +33,7 @@ exports.getCourseForm = (req, res) => {
 };
 
 exports.getProfile = (req, res) => {
-  res.render('profile', { title: 'Profile' });
+  res.render('profile', { title: 'Profile', user: req.user });
 };
 
 exports.getTeacherDashboard = (req, res) => {

@@ -5,7 +5,7 @@ const asyncHandler = require('../middleware/async');
 exports.register = asyncHandler(async (req, res) => {
   const { email, password, role } = req.body;
   const user = await User.create({ email, password, role });
-  req.session.user = { id: user._id, email: user.email, role: user.role };
+  req.session.user = { id: user._id, email: user.email, role: user.role, firstName: user.firstName, lastName: user.lastName, discipline: user.discipline };
   res.status(201).json({ success: true, user: req.session.user });
 });
 
@@ -16,7 +16,7 @@ exports.login = asyncHandler(async (req, res) => {
   if (!user) return res.status(401).json({ success: false, message: 'Invalid credentials' });
   const isMatch = await user.matchPassword(password);
   if (!isMatch) return res.status(401).json({ success: false, message: 'Invalid credentials' });
-  req.session.user = { id: user._id, email: user.email, role: user.role };
+  req.session.user = { id: user._id, email: user.email, role: user.role, firstName: user.firstName, lastName: user.lastName, discipline: user.discipline };
   res.status(200).json({ success: true, user: req.session.user });
 });
 

@@ -22,7 +22,18 @@ const UserSchema = new mongoose.Schema({
     enum: ['student', 'teacher', 'admin'],
     default: 'student',
     required: true
-
+  },
+  firstName: {
+    type: String,
+    required: function() { return this.role === 'teacher'; }
+  },
+  lastName: {
+    type: String,
+    required: function() { return this.role === 'teacher'; }
+  },
+  discipline: {
+    type: String,
+    required: function() { return this.role === 'teacher'; }
   }
 });
 

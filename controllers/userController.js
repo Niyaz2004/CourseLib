@@ -82,3 +82,60 @@ exports.deleteUser = asyncHandler(async (req, res, next) => {
     data: {}
   });
 });
+
+// @desc    Get current logged-in user's profile
+// @route   GET /api/v1/users/profile
+// @access  Private (teacher, admin)
+exports.getCurrentUserProfile = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user.id).select('-password');
+
+  if (!user) {
+    return next(new ErrorResponse('User not found', 404));
+  }
+
+  res.status(200).json({
+    success: true,
+    data: user
+  });
+});
+
+// @desc    Update current logged-in user's profile
+// @route   PUT /api/v1/users/profile
+// @access  Private (teacher, admin)
+exports.updateCurrentUserProfile = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user.id).select('+password');
+
+  if (!user) {
+    return next(new ErrorResponse('User not found', 404));
+  }
+
+  const { firstName, lastName, discipline, oldPassword, newPassword } = req.body;
+
+  // Update profile fields for teachers only
+  if (user.role === 'teacher') {
+    if (firstName) user.firstName = firstName;
+    if (lastName) user.lastName = lastName;
+    if (discipline) user.discipline = discipline;
+  }
+
+  // Handle password change
+  if (oldPassword && newPassword) {
+    const isMatch = await user.matchPassword(oldPassword);
+    if (!isMatch) {
+      return next(new ErrorResponse('Old password is incorrect', 400));
+    }
+    user.password = newPassword;
+  }
+
+  await user.save();
+
+  // Update session user data to reflect changes
+  if (req.session) {
+    req.session.user = user;
+  }
+
+  res.status(200).json({
+    success: true,
+    data: user
+  });
+});

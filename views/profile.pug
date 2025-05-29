@@ -4,21 +4,32 @@ block content
   .profile-container
     h1 My Profile
     .profile-info
-      p Email: #{user.email}
-      p Role: #{user.role}
+      if user
+        p Email: #{user.email}
+        p Role: #{user.role}
+
+    script(src="/js/profile.js")
     
     if user && (user.role === 'teacher' || user.role === 'admin')
-      .teacher-actions
-        a.btn(href="/courses/new") Create New Course
-        a.btn(href="/teacher/dashboard") Teacher Dashboard
-    
+      form#profileForm(method="POST", action="/api/v1/users/profile?_method=PUT")
+        .form-group
+          label(for="lastName") Last Name
+          input#lastName.form-control(type="text", name="lastName", value=user.lastName || '', required)
+        .form-group
+          label(for="firstName") First Name
+          input#firstName.form-control(type="text", name="firstName", value=user.firstName || '', required)
+        .form-group
+          label(for="discipline") Discipline
+          input#discipline.form-control(type="text", name="discipline", value=user.discipline || '', required)
+        button.btn(type="submit") Update Profile
+
     .change-password
       h2 Change Password
-      form#changePasswordForm
+      form#changePasswordForm(method="POST", action="/api/v1/users/profile?_method=PUT")
         .form-group
-          label(for="currentPassword") Current Password
-          input#currentPassword.form-control(type="password", required)
+          label(for="oldPassword") Old Password
+          input#oldPassword.form-control(type="password", name="oldPassword", required)
         .form-group
           label(for="newPassword") New Password
-          input#newPassword.form-control(type="password", required)
+          input#newPassword.form-control(type="password", name="newPassword", required)
         button.btn(type="submit") Update Password
