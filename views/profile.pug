@@ -1,4 +1,4 @@
-extends layout
+extends profile_layout
 
 block content
   .profile-container
@@ -14,44 +14,13 @@ block content
       form#profileForm(method="POST", action="/api/v1/users/profile?_method=PUT")
         .form-group
           label(for="lastName") Last Name
-          if user.lastName
-            input#lastName.form-control(type="text", name="lastName", value=user.lastName, required)
-          else
-            input#lastName.form-control(type="text", name="lastName", required)
+          input#lastName.form-control(type="text", name="lastName", value=user.lastName || '', required)
         .form-group
           label(for="firstName") First Name
-          if user.firstName
-            input#firstName.form-control(type="text", name="firstName", value=user.firstName, required)
-          else
-            input#firstName.form-control(type="text", name="firstName", required)
+          input#firstName.form-control(type="text", name="firstName", value=user.firstName || '', required)
         .form-group
           label(for="discipline") Discipline
-          if user.discipline
-            input#discipline.form-control(type="text", name="discipline", value=user.discipline, required)
-          else
-            input#discipline.form-control(type="text", name="discipline", required)
-        button.btn(type="submit") Update Profile
-
-    if user && user.role === 'student'
-      form#profileForm(method="POST", action="/api/v1/users/profile?_method=PUT")
-        .form-group
-          label(for="lastName") Last Name
-          if user.lastName
-            input#lastName.form-control(type="text", name="lastName", value=user.lastName, required)
-          else
-            input#lastName.form-control(type="text", name="lastName", required)
-        .form-group
-          label(for="firstName") First Name
-          if user.firstName
-            input#firstName.form-control(type="text", name="firstName", value=user.firstName, required)
-          else
-            input#firstName.form-control(type="text", name="firstName", required)
-        .form-group
-          label(for="group") Group
-          if user.group
-            input#group.form-control(type="text", name="group", value=user.group, required)
-          else
-            input#group.form-control(type="text", name="group", required)
+          input#discipline.form-control(type="text", name="discipline", value=user.discipline || '', required)
         button.btn(type="submit") Update Profile
 
     .change-password

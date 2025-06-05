@@ -1,0 +1,164 @@
+/* testDetail.css */
+:root {
+  --primary: #4f46e5;
+  --primary-dark: #4338ca;
+  --primary-light: #6366f1;
+  --secondary: #ec4899;
+  --success: #10b981;
+  --danger: #ef4444;
+  --light: #f9fafb;
+  --dark: #111827;
+  --gray: #6b7280;
+  --border-radius: 12px;
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body {
+  background-color: #f5f7ff;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--dark);
+  line-height: 1.6;
+  padding: 1rem;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  background: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  padding: 2rem;
+}
+
+h1 {
+  color: var(--primary);
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(to right, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+p {
+  color: var(--dark);
+  margin-bottom: 0.5rem;
+}
+
+hr {
+  border: 0;
+  height: 1px;
+  background-image: linear-gradient(to right, rgba(79, 70, 229, 0.1), rgba(79, 70, 229, 0.5), rgba(79, 70, 229, 0.1));
+  margin: 1.5rem 0;
+}
+
+/* Card Styles */
+.card {
+  border: none;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+  overflow: hidden;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+.card-title {
+  font-size: 1.25rem;
+  color: var(--primary);
+  margin-bottom: 1rem;
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+.card-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 40px;
+  height: 3px;
+  background: var(--primary);
+  border-radius: 3px;
+}
+
+/* List Group Styles */
+.list-group {
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  margin-top: 1rem;
+}
+
+.list-group-item {
+  padding: 1rem 1.25rem;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-top: none;
+  background-color: var(--light);
+  transition: var(--transition);
+}
+
+.list-group-item:first-child {
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  border-top-left-radius: var(--border-radius);
+  border-top-right-radius: var(--border-radius);
+}
+
+.list-group-item:last-child {
+  border-bottom-left-radius: var(--border-radius);
+  border-bottom-right-radius: var(--border-radius);
+}
+
+.list-group-item:hover {
+  background-color: #f0f2f5;
+}
+
+/* Correct Answer Highlight */
+strong {
+  color: var(--success);
+  font-weight: 600;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card {
+  animation: fadeIn 0.4s ease-out forwards;
+  animation-delay: calc(var(--order) * 0.1s);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: 1.5rem;
+  }
+  
+  h1 {
+    font-size: 1.75rem;
+  }
+  
+  .card-body {
+    padding: 1.25rem;
+  }
+  
+  .list-group-item {
+    padding: 0.75rem 1rem;
+  }
+}

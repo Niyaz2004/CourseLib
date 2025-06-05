@@ -1,7 +1,12 @@
-extends layout
+extends teacherDashboard_layout
 
 block content
-  h1 Teacher Dashboard
+  .dashboard-header
+    h1 Teacher Dashboard
+    a.profile-btn(href="/profile") 
+      i.fas.fa-user
+      span My Profile
+    a.logout-btn(href="/") Logout
   p Manage your courses here.
   a.btn.btn-primary(href='/teacher/createcourse') Create New Course
   hr

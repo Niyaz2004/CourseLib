@@ -1,4 +1,4 @@
-extends layout
+extends editCourse_layout
 
 block content
   .container
@@ -22,8 +22,9 @@ block content
         .form-group
           label(for="tuition") Tuition Cost
           input#tuition.form-control(type="number" name="tuition" min="0" required value=course.tuition)
-        button.btn.btn-secondary(type="button" id="prevBtn2") Previous
-        button.btn.btn-primary(type="button" id="nextBtn2") Next
+        .step-navigation
+          button.btn.btn-secondary(type="button" id="prevBtn2") Previous
+          button.btn.btn-primary(type="button" id="nextBtn2") Next
 
       // Step 3
       .form-step#step3(style="display:none;")
@@ -37,8 +38,9 @@ block content
           label.checkbox-label
             input#scholarshipsAvailable(type="checkbox" name="scholarshipsAvailable" checked=course.scholarshipsAvailable)
             span Scholarships Available
-        button.btn.btn-secondary(type="button" id="prevBtn3") Previous
-        button.btn.btn-primary(type="button" id="nextBtn3") Next
+        .step-navigation
+          button.btn.btn-secondary(type="button" id="prevBtn3") Previous
+          button.btn.btn-primary(type="button" id="nextBtn3") Next
 
       // Step 4 - Modules and Lessons
       .form-step#step4(style="display:none;")
@@ -89,8 +91,9 @@ block content
                 button.btn.btn-primary.btn-sm.add-lesson-btn(type="button") Add Lesson
                 button.btn.btn-danger.btn-sm.remove-module-btn(type="button") Remove Module
           button.btn.btn-sm.btn-success(type="button" id="addModuleBtn") Add Module
-        button.btn.btn-secondary(type="button" id="prevBtn4") Previous
-        button.btn.btn-primary(type="submit") Update Course
+        .step-navigation
+          button.btn.btn-secondary(type="button" id="prevBtn3") Previous
+          button.btn.btn-primary(type="submit") Update Course
 
   script.
     window.courseData = !{JSON.stringify(course)};

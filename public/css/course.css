@@ -1,0 +1,423 @@
+/* course.css */
+:root {
+  --primary-color: #4f46e5;
+  --primary-light: #6366f1;
+  --primary-dark: #4338ca;
+  --secondary-color: #ec4899;
+  --light-color: #f9fafb;
+  --dark-color: #111827;
+  --gray-color: #6b7280;
+  --danger-color: #ef4444;
+  --success-color: #10b981;
+  --border-radius: 12px;
+  --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.course-detail {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--dark-color);
+  line-height: 1.6;
+}
+
+.course-header {
+  margin-bottom: 3rem;
+  position: relative;
+}
+
+.header-actions {
+  margin-bottom: 1.5rem;
+}
+
+.course-header h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  color: var(--primary-color);
+  line-height: 1.2;
+  background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  display: inline-block;
+}
+
+.course-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: var(--transition);
+  border: none;
+  font-size: 1rem;
+}
+
+.btn-secondary {
+  background-color: var(--light-color);
+  color: var(--gray-color);
+  box-shadow: var(--box-shadow);
+}
+
+.btn-secondary:hover {
+  background-color: #e5e7eb;
+  transform: translateY(-2px);
+}
+
+.btn-danger {
+  background-color: var(--danger-color);
+  color: white;
+}
+
+.btn-danger:hover {
+  background-color: #dc2626;
+  transform: translateY(-2px);
+}
+
+.course-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+}
+
+@media (min-width: 992px) {
+  .course-content {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.course-info {
+  background: white;
+  padding: 2rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+}
+
+.course-info p {
+  margin-bottom: 1.5rem;
+  color: var(--dark-color);
+}
+
+.meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.meta p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--gray-color);
+}
+
+.meta p strong {
+  display: block;
+  color: var(--dark-color);
+  margin-bottom: 0.25rem;
+  font-weight: 600;
+}
+
+.modules-section {
+  background: white;
+  padding: 2rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+}
+
+.modules-section h2 {
+  font-size: 1.75rem;
+  margin-bottom: 1.5rem;
+  color: var(--primary-color);
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+.modules-section h2::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+  border-radius: 3px;
+}
+
+.module {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.module:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.module h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: var(--dark-color);
+  display: flex;
+  align-items: center;
+}
+
+.module h3::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background-color: var(--primary-color);
+  border-radius: 50%;
+  margin-right: 0.75rem;
+}
+
+.lesson {
+  margin-bottom: 1.5rem;
+  padding: 1.5rem;
+  background-color: var(--light-color);
+  border-radius: var(--border-radius);
+  transition: var(--transition);
+}
+
+.lesson:hover {
+  transform: translateX(5px);
+  box-shadow: var(--box-shadow);
+}
+
+.lesson h4 {
+  font-size: 1.2rem;
+  margin-bottom: 0.75rem;
+  color: var(--dark-color);
+}
+
+.lesson p {
+  color: var(--gray-color);
+  margin-bottom: 1rem;
+}
+
+video {
+  width: 100%;
+  max-width: 600px;
+  border-radius: var(--border-radius);
+  margin-top: 1rem;
+  background-color: #000;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.module {
+  animation: fadeIn 0.4s ease-out forwards;
+  animation-delay: calc(var(--order) * 0.1s);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .course-detail {
+    padding: 1.5rem;
+  }
+  
+  .course-header h1 {
+    font-size: 2rem;
+  }
+  
+  .course-actions {
+    flex-direction: column;
+  }
+  
+  .btn {
+    width: 100%;
+  }
+}
+
+/* Дополнения для tests-section и других элементов */
+
+/* Стили для секции тестов */
+.tests-section {
+  background: white;
+  padding: 2rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  margin-top: 3rem;
+}
+
+.tests-section h2 {
+  font-size: 1.75rem;
+  margin-bottom: 1.5rem;
+  color: var(--primary-color);
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+.tests-section h2::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+  border-radius: 3px;
+}
+
+.tests-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.tests-section li {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tests-section li:last-child {
+  border-bottom: none;
+}
+
+.tests-section li:hover {
+  background-color: var(--light-color);
+}
+
+.tests-section a {
+  color: var(--dark-color);
+  text-decoration: none;
+  font-weight: 500;
+  flex-grow: 1;
+  transition: var(--transition);
+}
+
+.tests-section a:hover {
+  color: var(--primary-color);
+}
+
+/* Стили для кнопки удаления теста */
+.delete-test-button {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  margin-left: 1rem;
+}
+
+/* Стили для кнопки создания теста */
+.course-actions .btn-primary {
+  background-color: var(--primary-color);
+  color: white;
+  margin-top: 1.5rem;
+}
+
+.course-actions .btn-primary:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
+}
+
+/* Стили для flex-элементов */
+.d-flex {
+  display: flex;
+}
+
+.align-items-center {
+  align-items: center;
+}
+
+.justify-content-between {
+  justify-content: space-between;
+}
+
+/* Стили для кнопок в модулях */
+.btn-sm {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+}
+
+/* Дополнительные анимации */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.tests-section li {
+  animation: slideIn 0.3s ease-out forwards;
+  animation-delay: calc(var(--order) * 0.05s);
+}
+
+/* Адаптивные стили для видео */
+@media (max-width: 640px) {
+  video {
+    width: 100%;
+    height: auto;
+  }
+  
+  .tests-section li {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  
+  .delete-test-button {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
+/* Стили для состояния загрузки */
+.loading-state {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s ease-in-out infinite;
+  margin-left: 0.5rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Стили для пустых состояний */
+.empty-state {
+  text-align: center;
+  padding: 2rem;
+  color: var(--gray-color);
+  font-size: 1.1rem;
+  background-color: var(--light-color);
+  border-radius: var(--border-radius);
+}

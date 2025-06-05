@@ -1,0 +1,213 @@
+:root {
+  --primary: #324fa0;
+  --primary-color: #4f46e5;
+  --primary-light: #6366f1;
+  --primary-dark: #4338ca;
+  --secondary-color: #ec4899;
+  --light-color: #f9fafb;
+  --dark-color: #111827;
+  --gray-color: #6b7280;
+  --danger: #ef4444;
+  --danger-dark: #dc2626;
+  --border-radius: 12px;
+  --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body {
+  background-color: #f3f4f6;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--dark-color);
+  line-height: 1.5;
+  padding: 2rem;
+}
+
+h1 {
+  color: var(--primary-color);
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  display: inline-block;
+}
+
+p {
+  color: var(--gray-color);
+  margin-bottom: 2rem;
+  font-size: 1.1rem;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--box-shadow);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+hr {
+  border: 0;
+  height: 1px;
+  background-image: linear-gradient(to right, rgba(79, 70, 229, 0.1), rgba(79, 70, 229, 0.75), rgba(79, 70, 229, 0.1));
+  margin: 2.5rem 0;
+}
+
+#courseList {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+#courseList li {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  box-shadow: var(--box-shadow);
+  transition: var(--transition);
+  border-left: 4px solid var(--primary-color);
+}
+
+#courseList li:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+#courseList li a {
+  color: var(--dark-color);
+  font-weight: 600;
+  text-decoration: none;
+  display: block;
+  transition: var(--transition);
+  font-size: 1.1rem;
+}
+
+#courseList li a:hover {
+  color: var(--primary-color);
+}
+
+/* Empty state styling */
+#courseList + p {
+  text-align: center;
+  padding: 3rem;
+  background: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  font-size: 1.2rem;
+  color: var(--gray-color);
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+#courseList li {
+  animation: fadeIn 0.4s ease-out forwards;
+  animation-delay: calc(var(--order) * 0.1s);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  body {
+    padding: 1.5rem;
+  }
+  
+  h1 {
+    font-size: 2rem;
+  }
+  
+  #courseList {
+    grid-template-columns: 1fr;
+  }
+}
+
+.logout-btn {
+  position: fixed; /* Фиксированное позиционирование */
+  top: 20px; /* Отступ сверху */
+  right: 20px; /* Отступ справа */
+  padding: 10px 20px; /* Внутренние отступы */
+  background-color: var(--danger); /* Красный цвет фона */
+  color: rgb(255, 255, 255); /* Белый текст */
+  text-decoration: none; /* Убираем подчеркивание */
+  border-radius: var(--border-radius); /* Скругленные углы */
+  font-family: 'Inter', sans-serif; /* Современный шрифт */
+  font-weight: 500; /* Полужирный текст */
+  font-size: 0.9rem; /* Размер текста */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Тень */
+  transition: all 0.3s ease; /* Плавные переходы */
+  z-index: 1000; /* Поверх других элементов */
+  border: none; /* Убираем границу */
+  cursor: pointer; /* Курсор-указатель */
+}
+
+.logout-btn:hover {
+  background-color: var(--danger-dark); /* Темнее при наведении */
+  transform: translateY(-2px); /* Легкий подъем */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Увеличенная тень */
+}
+
+.logout-btn:active {
+  transform: translateY(0); /* Возвращаем на место при нажатии */
+}
+
+/* Стили для кнопки профиля */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.profile-btn {
+  position: fixed; /* Фиксированное позиционирование */
+  top: 20px; /* Отступ сверху */
+  right: 120px; /* Отступ справа */
+  align-items: center;
+  gap: 0rem;
+  padding: 0.5rem 1.5rem;
+  background-color: var(--primary);
+  color: rgb(255, 255, 255);
+  border-radius: var(--border-radius);
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.profile-btn:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.profile-btn i {
+  font-size: 1rem;
+}

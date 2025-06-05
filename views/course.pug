@@ -1,4 +1,4 @@
-extends layout
+extends course_layout
 
 block content
   .course-detail
@@ -21,7 +21,7 @@ block content
       .course-info
         p= course.description
         .meta
-          p Teacher: #{course.teacher.name}
+          p Teacher: #{course.teacher.lastName} #{course.teacher.firstName}
           p Duration: #{course.weeks} weeks
           p Tuition: $#{course.tuition}
           p Skill Level: #{course.minimumSkill}

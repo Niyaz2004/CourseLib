@@ -1,0 +1,161 @@
+/* profile.css */
+:root {
+  --primary: #afd8f8;
+  --primary-dark: #4338ca;
+  --primary-light: #6366f1;
+  --secondary: #ec4899;
+  --success: #10b981;
+  --danger: #ef4444;
+  --light: #f9fafb;
+  --dark: #111827;
+  --gray: #6b7280;
+  --border-radius: 12px;
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body {
+  background-color: #f5ffff;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--dark);
+  line-height: 1.6;
+  padding: 0;
+  margin: 0;
+}
+
+.profile-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+}
+
+h1 {
+  color: var(--primary);
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  text-align: center;
+  background: linear-gradient(to right, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+h2 {
+  color: var(--primary);
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 2rem 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--primary-light);
+}
+
+.profile-info {
+  background-color: var(--light);
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  margin-bottom: 2rem;
+}
+
+.profile-info p {
+  margin: 0.75rem 0;
+  font-size: 1.1rem;
+  color: var(--dark);
+}
+
+.profile-info p:first-child {
+  margin-top: 0;
+}
+
+.profile-info p:last-child {
+  margin-bottom: 0;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--dark);
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  font-size: 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: var(--border-radius);
+  transition: var(--transition);
+  background-color: #f8f9fa;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+  background-color: white;
+}
+
+.btn {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  text-align: center;
+}
+
+.btn:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.change-password {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* Анимации */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.profile-container {
+  animation: fadeIn 0.4s ease-out;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .profile-container {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+  
+  h1 {
+    font-size: 1.75rem;
+  }
+  
+  h2 {
+    font-size: 1.3rem;
+  }
+}
