@@ -25,6 +25,16 @@ router.get('/courses/:id', protect, getCourse);
 router.get('/courses/:id/edit', protect, getEditCourseView);
 router.get('/profile', protect, getProfile);
 
+// Redirect /teacher/dashboard to /courses/teacher/dashboard
+router.get('/teacher/dashboard', protect, (req, res) => {
+  res.redirect('/courses/teacher/dashboard');
+});
+
+// Redirect /student/dashboard to /courses/student/dashboard
+router.get('/student/dashboard', protect, (req, res) => {
+  res.redirect('/courses/student/dashboard');
+});
+
 /* Removed duplicate dashboard routes to avoid conflicts */
 // router.get('/teacher/dashboard', protect, getTeacherDashboard);
 // router.get('/student/dashboard', protect, getStudentDashboard);

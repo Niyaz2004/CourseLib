@@ -80,7 +80,7 @@ if (process.env.NODE_ENV === 'development') {
 // 12. Основные маршруты
 app.use('/', indexRouter); // Маршруты для рендеринга
 app.use('/api/v1/auth', authRouter);
-app.use('/', courseRouter);
+app.use('/courses', courseRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/', require('./routes/viewRouter')); 
 

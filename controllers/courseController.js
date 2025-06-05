@@ -110,7 +110,7 @@ exports.getCourse = asyncHandler(async (req, res, next) => {
   const course = await Course.findById(req.params.id).populate({
     path: 'teacher',
     select: 'name email'
-  });
+  }).populate('tests');
 
   if (!course) {
     return next(new ErrorResponse(`Course not found with id of ${req.params.id}`, 404));
@@ -260,6 +260,8 @@ const deleteFromGridFS = (fileId) => {
   });
 };
 
+const Test = require('../models/Test');
+
 // @desc    Получить форму редактирования курса
 // @route   GET /courses/:id/edit
 // @access  Private (teacher/admin)
@@ -269,7 +271,8 @@ exports.getEditCourseForm = asyncHandler(async (req, res, next) => {
       path: 'modules.lessons.video',
       model: 'uploads.files',
       select: 'filename _id'
-    });
+    })
+    .populate('tests');
 
   if (!course) {
     return next(new ErrorResponse(`Course not found with id of ${req.params.id}`, 404));
@@ -380,3 +383,154 @@ exports.getVideoStream = asyncHandler(async (req, res, next) => {
     next(new ErrorResponse('Error retrieving video', 500));
   }
 });
+
+// Add these new controller functions at the end of the file, before the exports
+
+// @desc    Get test creation form
+// @route   GET /courses/:id/tests/new
+// @access  Private (teacher/admin)
+exports.getTestForm = asyncHandler(async (req, res, next) => {
+  const course = await Course.findById(req.params.id);
+
+  if (!course) {
+    return next(new ErrorResponse(`Course not found with id of ${req.params.id}`, 404));
+  }
+
+  // Check permissions
+  if (course.teacher.toString() !== req.user.id && req.user.role !== 'admin') {
+    return next(new ErrorResponse('Not authorized to create tests for this course', 403));
+  }
+
+  res.render('createTest', {
+    title: 'Create Test',
+    courseId: req.params.id,
+    course: course.toObject()
+  });
+});
+
+// @desc    Create a new test for a course
+// @route   POST /courses/:id/tests
+// @access  Private (teacher/admin)
+exports.createTest = asyncHandler(async (req, res, next) => {
+  const course = await Course.findById(req.params.id);
+
+  if (!course) {
+    return next(new ErrorResponse(`Course not found with id of ${req.params.id}`, 404));
+  }
+
+  // Check permissions
+  if (course.teacher.toString() !== req.user.id && req.user.role !== 'admin') {
+    return next(new ErrorResponse('Not authorized to create tests for this course', 403));
+  }
+
+  // Process test data
+  let { title, description, passingScore, questions } = req.body;
+
+  // Convert questions object to array if needed
+  if (questions && !Array.isArray(questions) && typeof questions === 'object') {
+    questions = Object.values(questions);
+  }
+
+  // Validate required fields
+  if (!title || !questions || !Array.isArray(questions) || questions.length === 0) {
+    return next(new ErrorResponse('Please provide title and at least one question', 400));
+  }
+
+  console.log('Received questions:', JSON.stringify(questions, null, 2));
+
+  // Process questions
+  const processedQuestions = questions.map(q => {
+    // Validate question
+    if (!q.questionText || !q.answers || !Array.isArray(q.answers) || q.answers.length < 2) {
+      throw new Error('Each question must have text and at least 2 answers');
+    }
+
+    // Process answers
+      const processedAnswers = q.answers.map((a, index) => {
+        if (!a.text) {
+          throw new Error(`Answer ${index + 1} is missing text`);
+        }
+        return {
+          text: a.text,
+          isCorrect: a.isCorrect === 'true' || a.isCorrect === true || a.isCorrect === 'on'
+        };
+      });
+
+    // Validate at least one correct answer
+    if (!processedAnswers.some(a => a.isCorrect)) {
+      throw new Error(`Question "${q.questionText}" must have at least one correct answer`);
+    }
+
+    return {
+      questionText: q.questionText,
+      answers: processedAnswers
+    };
+  });
+
+  // Create the test
+  const test = await Test.create({
+    title,
+    description,
+    passingScore: passingScore || 70, // Default passing score
+    questions: processedQuestions,
+    course: course._id,
+    createdBy: req.user.id
+  });
+
+  // No need to add test to course.tests as it's a virtual field
+  // course.tests.push(test._id);
+  // await course.save();
+
+  res.status(201).json({ 
+    success: true, 
+    data: test,
+    redirectUrl: `/courses/${course._id}`
+  });
+});
+
+exports.getTestDetail = asyncHandler(async (req, res, next) => {
+  const { testId } = req.params;
+
+  const test = await Test.findById(testId);
+
+  if (!test) {
+    return next(new ErrorResponse(`Test not found with id of ${testId}`, 404));
+  }
+
+  res.render('testDetail', {
+    title: test.title,
+    test,
+    user: req.user
+  });
+});
+
+exports.deleteTest = asyncHandler(async (req, res, next) => {
+  const { courseId, testId } = req.params;
+
+  const course = await Course.findById(courseId).populate('tests');
+  if (!course) {
+    return next(new ErrorResponse(`Course not found with id of ${courseId}`, 404));
+  }
+
+  const test = await Test.findById(testId);
+  if (!test) {
+    return next(new ErrorResponse(`Test not found with id of ${testId}`, 404));
+  }
+
+  // Check permissions
+  if (course.teacher.toString() !== req.user.id && req.user.role !== 'admin') {
+    return next(new ErrorResponse('Not authorized to delete this test', 403));
+  }
+
+  // Remove test from course.tests array if exists
+  course.tests = course.tests.filter(tid => tid.toString() !== testId);
+  await course.save();
+
+  // Delete the test
+  await test.deleteOne();
+
+  res.status(200).json({ success: true, message: 'Test deleted successfully' });
+});
+
+// Don't forget to add Test to the required models at the top of the file
+// const Test = require('../models/Test');

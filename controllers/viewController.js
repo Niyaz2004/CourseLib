@@ -20,7 +20,14 @@ exports.getCourses = (req, res) => {
 };
 
 exports.getCourse = asyncHandler(async (req, res, next) => {
-  const course = await Course.findById(req.params.id).populate('teacher', 'name email');
+  const course = await Course.findById(req.params.id)
+    .populate('teacher', 'name email')
+    .populate({
+      path: 'tests',
+      populate: {
+        path: 'questions.answers'
+      }
+    });
   if (!course) {
     return next(new ErrorResponse('Course not found', 404));
   }

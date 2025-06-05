@@ -1,0 +1,56 @@
+extends layout
+
+block content
+  .container.mt-4
+    h1.mb-4 Create Test for #{course.title}
+    form#testForm(method="POST" action=`/courses/${course._id}/tests`)
+      .form-group.mb-3
+        label(for="title") Test Title
+        input#title.form-control(type="text" name="title" required minlength="3")
+      
+      .form-group.mb-3
+        label(for="description") Description
+        textarea#description.form-control(name="description" rows="3")
+      
+      .form-group.mb-3
+        label(for="passingScore") Passing Score (%)
+        input#passingScore.form-control(type="number" name="passingScore" min="0" max="100" value="70" required)
+      
+      #questions-container.mb-4
+        .question-card.card.mb-3
+          .card-body
+            h5.card-title Question 1
+            .form-group.mb-3
+              label Question Text
+              input.form-control.question-text(type="text" name="questions[0][questionText]" required minlength="5")
+            
+            .answers-container.mb-3
+              .answer-group.mb-2
+                .input-group
+                  input.form-control.answer-text(type="text" name="questions[0][answers][0][text]" placeholder="Answer text" required)
+                  .input-group-append
+                    .input-group-text
+                      input.answer-correct(type="checkbox" name="questions[0][answers][0][isCorrect]")
+                      span.ml-2 Correct
+                  button.btn.btn-outline-danger.remove-answer(type="button") ×
+              
+              .answer-group.mb-2
+                .input-group
+                  input.form-control.answer-text(type="text" name="questions[0][answers][1][text]" placeholder="Answer text" required)
+                  .input-group-append
+                    .input-group-text
+                      input.answer-correct(type="checkbox" name="questions[0][answers][1][isCorrect]")
+                      span.ml-2 Correct
+                  button.btn.btn-outline-danger.remove-answer(type="button") ×
+            
+            button.btn.btn-secondary.add-answer(type="button" data-question-index="0") Add Answer
+            button.btn.btn-outline-danger.float-right.remove-question(type="button") Remove Question
+      
+      .mb-3
+        button.btn.btn-primary.mr-2(type="submit") Save Test
+        button.btn.btn-success.add-question(type="button") Add Question
+        a.btn.btn-secondary.ml-2(href=`/courses/${course._id}`) Cancel
+
+block scripts
+  script(src="/js/testForm.js")
+  script(src="/js/testFormSubmit.js")

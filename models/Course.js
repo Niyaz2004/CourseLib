@@ -83,6 +83,13 @@ CourseSchema.virtual('assignments', {
   justOne: false
 });
 
+CourseSchema.virtual('tests', {
+  ref: 'Test',
+  localField: '_id',
+  foreignField: 'course',
+  justOne: false
+});
+
 // Cascade delete assignments when a course is deleted
 CourseSchema.pre('remove', async function(next) {
   await this.model('Assignment').deleteMany({ course: this._id });

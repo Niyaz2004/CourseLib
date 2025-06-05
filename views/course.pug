@@ -4,13 +4,18 @@ block content
   .course-detail
     .course-header
       .header-actions
-        a.btn.btn-secondary(href="/teacher/dashboard") ← Back to courses
+        if user && user.role === 'student'
+          a.btn.btn-secondary(href="/student/dashboard") ← Back to courses
+        else
+          a.btn.btn-secondary(href="/teacher/dashboard") ← Back to courses
       h1= course.title
       if user && (user.role === 'teacher' || user.role === 'admin')
         .course-actions
           a.btn(href=`/courses/${course._id}/edit`) Edit Course
           form(method="POST" action=`/api/v1/courses/${course._id}?_method=DELETE` onsubmit="event.preventDefault(); fetch(this.action, { method: 'POST' }).then(() => window.location.href='/teacher/dashboard')")
             button.btn.btn-danger(type="submit") Delete Course
+      else if user && user.role === 'student'
+        // Hide delete button for students (no button rendered)
           
     .course-content
       .course-info
@@ -37,6 +42,19 @@ block content
                         source(src=`/api/v1/courses/video/${lesson.video}` type="video/mp4")
                         | Your browser does not support the video tag.
 
+      if course.tests && course.tests.length > 0
+        .tests-section
+          h2 Tests
+          ul
+            each test in course.tests
+              li.d-flex.align-items-center.justify-content-between
+                a(href=`/courses/${course._id}/tests/${test._id}`)= test.title
+                if user && (user.role === 'teacher' || user.role === 'admin')
+                  button.btn.btn-sm.btn-danger.delete-test-button(type="button" data-course-id=course._id data-test-id=test._id) Delete
+
 block scripts
+  script(src="/js/testDelete.js")
   if user && (user.role === 'teacher' || user.role === 'admin')
+    .course-actions
+      a.btn.btn-primary(href=`/courses/${course._id}/tests/new`) Create Test
     script(src="/js/teacherDashboard.js")

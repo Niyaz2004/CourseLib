@@ -20,9 +20,20 @@ const QuestionSchema = new mongoose.Schema({
 });
 
 const TestSchema = new mongoose.Schema({
-  moduleId: {
+  title: {
+    type: String,
+    required: true
+  },
+  description: {
+    type: String
+  },
+  passingScore: {
+    type: Number,
+    default: 70
+  },
+  course: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Course.modules',
+    ref: 'Course',
     required: true
   },
   questions: [QuestionSchema],
