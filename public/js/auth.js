@@ -34,15 +34,22 @@ document.addEventListener('DOMContentLoaded', () => {
       const email = registerForm.email.value.trim();
       const password = registerForm.password.value;
       const role = registerForm.role.value;
+      const firstName = registerForm.firstName ? registerForm.firstName.value.trim() : '';
+      const lastName = registerForm.lastName ? registerForm.lastName.value.trim() : '';
+      const discipline = registerForm.discipline ? registerForm.discipline.value.trim() : '';
       if (!email || !password) {
         alert('Please fill in all fields');
+        return;
+      }
+      if (role === 'teacher' && (!firstName || !lastName || !discipline)) {
+        alert('Please fill in all teacher fields');
         return;
       }
       try {
         const res = await fetch('/api/v1/auth/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password, role }),
+          body: JSON.stringify({ email, password, role, firstName, lastName, discipline }),
           credentials: 'same-origin'
         });
         const data = await res.json();
@@ -67,6 +74,19 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = '/login';
       } catch (err) {
         alert(err.message);
+      }
+    });
+  }
+
+  // Show/hide teacher fields based on role selection
+  const roleSelect = document.getElementById('role');
+  const teacherFields = document.getElementById('teacherFields');
+  if (roleSelect && teacherFields) {
+    roleSelect.addEventListener('change', () => {
+      if (roleSelect.value === 'teacher') {
+        teacherFields.style.display = 'block';
+      } else {
+        teacherFields.style.display = 'none';
       }
     });
   }

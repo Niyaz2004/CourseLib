@@ -15,6 +15,14 @@ block content
         select#role.form-control(name="role" required)
           option(value="student") Student
           option(value="teacher") Teacher
+      // Teacher specific fields, initially hidden
+      .form-group#teacherFields(style="display:none;")
+        label(for="firstName") First Name
+        input#firstName.form-control(type="text" name="firstName")
+        label(for="lastName") Last Name
+        input#lastName.form-control(type="text" name="lastName")
+        label(for="discipline") Discipline
+        input#discipline.form-control(type="text" name="discipline")
       button.btn.btn-primary(type="submit") Register
     p
       | Already have an account?
