@@ -3,9 +3,9 @@ const asyncHandler = require('../middleware/async');
 
 // Register user
 exports.register = asyncHandler(async (req, res) => {
-  const { email, password, role, firstName, lastName, discipline } = req.body;
-  const user = await User.create({ email, password, role, firstName, lastName, discipline });
-  req.session.user = { id: user._id, email: user.email, role: user.role, firstName: user.firstName, lastName: user.lastName, discipline: user.discipline };
+  const { email, password, role, firstName, lastName, discipline, group } = req.body;
+  const user = await User.create({ email, password, role, firstName, lastName, discipline, group });
+  req.session.user = { id: user._id, email: user.email, role: user.role, firstName: user.firstName, lastName: user.lastName, discipline: user.discipline, group: user.group };
   res.status(201).json({ success: true, user: req.session.user });
 });
 

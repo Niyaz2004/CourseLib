@@ -7,11 +7,20 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
 
       const formData = new FormData(profileForm);
-      const data = {
-        firstName: formData.get('firstName'),
-        lastName: formData.get('lastName'),
-        discipline: formData.get('discipline')
-      };
+      let data = {};
+      if (formData.has('discipline')) {
+        data = {
+          firstName: formData.get('firstName'),
+          lastName: formData.get('lastName'),
+          discipline: formData.get('discipline')
+        };
+      } else if (formData.has('group')) {
+        data = {
+          firstName: formData.get('firstName'),
+          lastName: formData.get('lastName'),
+          group: formData.get('group')
+        };
+      }
 
       try {
         const res = await fetch('/api/v1/users/profile', {
@@ -31,6 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (profileForm.firstName) profileForm.firstName.value = result.data.firstName || '';
             if (profileForm.lastName) profileForm.lastName.value = result.data.lastName || '';
             if (profileForm.discipline) profileForm.discipline.value = result.data.discipline || '';
+            if (profileForm.group) profileForm.group.value = result.data.group || '';
           }
         } else {
           alert(result.error || 'Failed to update profile');

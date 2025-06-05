@@ -34,6 +34,10 @@ const UserSchema = new mongoose.Schema({
   discipline: {
     type: String,
     required: function() { return this.role === 'teacher'; }
+  },
+  group: {
+    type: String,
+    required: function() { return this.role === 'student'; }
   }
 });
 

@@ -109,13 +109,17 @@ exports.updateCurrentUserProfile = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse('User not found', 404));
   }
 
-  const { firstName, lastName, discipline, oldPassword, newPassword } = req.body;
+  const { firstName, lastName, discipline, oldPassword, newPassword, group } = req.body;
 
-  // Update profile fields for teachers only
+  // Update profile fields for teachers and students
   if (user.role === 'teacher') {
     if (firstName) user.firstName = firstName;
     if (lastName) user.lastName = lastName;
     if (discipline) user.discipline = discipline;
+  } else if (user.role === 'student') {
+    if (firstName) user.firstName = firstName;
+    if (lastName) user.lastName = lastName;
+    if (group) user.group = group;
   }
 
   // Handle password change
@@ -131,7 +135,15 @@ exports.updateCurrentUserProfile = asyncHandler(async (req, res, next) => {
 
   // Update session user data to reflect changes
   if (req.session) {
-    req.session.user = user;
+    req.session.user = {
+      id: user._id,
+      email: user.email,
+      role: user.role,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      discipline: user.discipline,
+      group: user.group
+    };
   }
 
   res.status(200).json({

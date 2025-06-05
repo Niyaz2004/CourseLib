@@ -1,6 +1,10 @@
 exports.protect = (req, res, next) => {
   if (req.session && req.session.user) {
     req.user = req.session.user;
+    // Ensure req.user.id is set for compatibility
+    if (!req.user.id && req.user._id) {
+      req.user.id = req.user._id.toString();
+    }
     console.log('protect middleware - req.user set:', req.user);
     next();
   } else {

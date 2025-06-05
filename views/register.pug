@@ -23,6 +23,15 @@ block content
         input#lastName.form-control(type="text" name="lastName")
         label(for="discipline") Discipline
         input#discipline.form-control(type="text" name="discipline")
+
+      // Student specific fields, initially hidden
+      .form-group#studentFields(style="display:none;")
+        label(for="firstNameStudent") First Name
+        input#firstNameStudent.form-control(type="text" name="firstName")
+        label(for="lastNameStudent") Last Name
+        input#lastNameStudent.form-control(type="text" name="lastName")
+        label(for="group") Group
+        input#group.form-control(type="text" name="group")
       button.btn.btn-primary(type="submit") Register
     p
       | Already have an account?
